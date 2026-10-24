@@ -144,3 +144,70 @@ export interface UserRepositoryPort {
   findById(id: string): Promise<StoredUser | null>;
   existsById(id: string): Promise<boolean>;
 }
+
+// ----------------------- UserProfile -----------------------
+
+/**
+ * Perfil completo del usuario: datos físicos, limitaciones y preferencias.
+ * Se crea una vez que el usuario completa el onboarding (registro inicial).
+ * Es actualizable en cualquier momento desde la app.
+ */
+export interface UserProfileData {
+  edad: number;
+  sexo: string;
+  pesoKg: number;
+  alturaCm: number;
+  nivelExperiencia: string;
+  lesiones: string[];
+  dolorActual: string[];
+  requiereConsulta: boolean;
+  musculosPrioritarios: string[];
+  pesoObjetivoKg: number | null;
+}
+
+export interface StoredUserProfile {
+  id: string;
+  userId: string;
+  user: {
+    id: string;
+    email: string;
+    nombre: string;
+  };
+  edad: number;
+  sexo: string;
+  pesoKg: number;
+  alturaCm: number;
+  nivelExperiencia: string;
+  lesiones: string[];
+  dolorActual: string[];
+  requiereConsulta: boolean;
+  musculosPrioritarios: string[];
+  pesoObjetivoKg: number | null;
+  updatedAt: Date;
+}
+
+export interface UserProfileRepositoryPort {
+  /** Devuelve el perfil del usuario, o null si nunca lo ha completado. */
+  findByUserId(userId: string): Promise<StoredUserProfile | null>;
+  /** Crea o actualiza (upsert) el perfil completo del usuario. */
+  upsert(userId: string, data: UserProfileData): Promise<StoredUserProfile>;
+}
+
+// ----------------------- ProgressRecord -----------------------
+
+export interface StoredProgressRecord {
+  id: string;
+  userId: string;
+  fecha: Date;
+  pesoKg: number | null;
+  medidas: Record<string, number> | null;
+  fotoUrls: string[];
+  fuente: string;
+}
+
+export interface ProgressRepositoryPort {
+  /** Devuelve todos los registros de progreso del usuario, ordenados por fecha ascendente. */
+  findByUser(userId: string): Promise<StoredProgressRecord[]>;
+  /** Crea un nuevo registro de progreso (peso manual o automático). */
+  create(userId: string, data: { pesoKg?: number | null; medidas?: Record<string, number> | null; fuente?: string }): Promise<StoredProgressRecord>;
+}

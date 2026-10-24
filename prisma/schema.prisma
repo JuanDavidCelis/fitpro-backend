@@ -107,6 +107,7 @@ model UserProfile {
   dolorActual        Json              @default("[]")
   requiereConsulta   Boolean           @default(false)
   musculosPrioritarios Json            @default("[]")
+  pesoObjetivoKg     Float?
   updatedAt          DateTime          @updatedAt
 }
 
@@ -180,6 +181,8 @@ model Exercise {
   etiquetas              Json              @default("[]")
   alternativas           Json              @default("[]")
   videoUrl               String?
+  imageUrl               String?
+  gifUrl                 String?
 
   workoutExercises WorkoutExercise[]
 }

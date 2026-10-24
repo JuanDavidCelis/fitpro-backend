@@ -64,6 +64,9 @@ export interface Exercise {
   etiquetas: string[];
   // IDs de ejercicios candidatos a sustitución, en orden de preferencia.
   alternativas: string[];
+  // URLs de imagen y GIF animado del ejercicio (fuente: Nielide/exercises-dataset).
+  imageUrl?: string;
+  gifUrl?: string;
 }
 
 export interface Limitaciones {
@@ -135,6 +138,8 @@ export interface WorkoutExercisePlan {
   // mostrarlos según el nivel del usuario.
   instrucciones: string;
   erroresComunes: string[];
+  imageUrl?: string;
+  gifUrl?: string;
 }
 
 export interface CardioBlockPlan {

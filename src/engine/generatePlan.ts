@@ -113,6 +113,8 @@ function buildDay(
         motivoSustitucion: null,
         instrucciones: exercise.instrucciones,
         erroresComunes: exercise.erroresComunes,
+        imageUrl: exercise.imageUrl,
+        gifUrl: exercise.gifUrl,
       });
     });
   }

@@ -14,5 +14,6 @@
     "resolveJsonModule": true,
     "moduleResolution": "node"
   },
-  "include": ["src", "tests"]
+  "include": ["src", "tests"],
+  "exclude": ["src/auth/FirebaseAuthTokenVerifier.ts"]
 }

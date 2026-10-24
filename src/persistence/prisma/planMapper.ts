@@ -25,7 +25,7 @@ export interface PrismaWorkoutExerciseRow {
   grupoSupersetId: string | null;
   sustituidoDesde: string | null;
   motivoSustitucion: string | null;
-  exercise: { nombre: string; grupoPrimario: string; instrucciones?: string | null; erroresComunes?: unknown };
+  exercise: { nombre: string; grupoPrimario: string; instrucciones?: string | null; erroresComunes?: unknown; imageUrl?: string | null; gifUrl?: string | null };
 }
 
 export interface PrismaWorkoutDayRow {
@@ -78,6 +78,8 @@ export function planRowToResult(row: PrismaWorkoutPlanRow): WorkoutPlanResult {
           motivoSustitucion: ej.motivoSustitucion,
           instrucciones: ej.exercise.instrucciones ?? '',
           erroresComunes: Array.isArray(ej.exercise.erroresComunes) ? (ej.exercise.erroresComunes as string[]) : [],
+          imageUrl: ej.exercise.imageUrl ?? undefined,
+          gifUrl: ej.exercise.gifUrl ?? undefined,
         })),
       cardio: dia.cardioModalidad
         ? {
