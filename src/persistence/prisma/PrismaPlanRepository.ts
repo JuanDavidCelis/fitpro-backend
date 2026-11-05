@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { WorkoutPlanResult } from '../../domain/types';
+import { EXERCISES } from '../../data/exercises';
 import { PlanRepositoryPort, StoredPlan } from '../ports/repositories';
 import { PrismaService } from './PrismaService';
 import { planRowToResult, PrismaWorkoutPlanRow } from './planMapper';
@@ -42,6 +43,30 @@ export class PrismaPlanRepository implements PlanRepositoryPort {
         where: { userId, activo: true },
         data: { activo: false },
       });
+
+      // Asegura que el catálogo de ejercicios exista (FK de WorkoutExercise).
+      const idsUsados = new Set(plan.dias.flatMap((d) => d.ejercicios.map((e) => e.exerciseId)));
+      for (const id of idsUsados) {
+        const ex = EXERCISES.find((e) => e.id === id);
+        if (!ex) continue;
+        await tx.exercise.upsert({
+          where: { id: ex.id },
+          update: {},
+          create: {
+            id: ex.id,
+            nombre: ex.nombre,
+            grupoPrimario: ex.grupoPrimario,
+            gruposSecundarios: ex.gruposSecundarios,
+            equipamientoRequerido: ex.equipamientoRequerido,
+            nivelMinimo: ex.nivelMinimo,
+            patron: ex.patron,
+            instrucciones: ex.instrucciones,
+            erroresComunes: ex.erroresComunes,
+            etiquetas: ex.etiquetas,
+            alternativas: ex.alternativas,
+          },
+        });
+      }
 
       const creado = await tx.workoutPlan.create({
         data: {

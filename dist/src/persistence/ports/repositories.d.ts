@@ -1,0 +1,132 @@
+import { UserSettings, WorkoutPlanResult } from '../../domain/types';
+import { SessionLog } from '../../engine/adaptationEngine';
+export interface StoredPlan {
+    id: string;
+    userId: string;
+    version: number;
+    activo: boolean;
+    plan: WorkoutPlanResult;
+    createdAt: Date;
+}
+export interface PlanRepositoryPort {
+    /** Devuelve el plan activo actual del usuario, o null si nunca generó uno. */
+    findActiveByUser(userId: string): Promise<StoredPlan | null>;
+    /** Guarda un nuevo plan como versión siguiente y marca los anteriores como inactivos. */
+    saveNewVersion(userId: string, plan: WorkoutPlanResult): Promise<StoredPlan>;
+    /** Historial completo de versiones (para que la IA explique "por qué cambió tu rutina"). */
+    findAllVersionsByUser(userId: string): Promise<StoredPlan[]>;
+}
+export interface StoredExerciseSet {
+    id: string;
+    sessionId: string;
+    userId: string;
+    exerciseId: string;
+    fecha: Date;
+    numeroSerie: number;
+    pesoKg: number;
+    repsRealizadas: number;
+    rirReportado: number | null;
+    repsObjetivoMax: number;
+}
+export interface LogSetInput {
+    sessionId: string;
+    userId: string;
+    exerciseId: string;
+    numeroSerie: number;
+    pesoKg: number;
+    repsRealizadas: number;
+    rirReportado: number | null;
+    repsObjetivoMax: number;
+}
+export interface SessionRepositoryPort {
+    logSet(input: LogSetInput): Promise<StoredExerciseSet>;
+    /**
+     * Devuelve el historial reciente de un ejercicio concreto agrupado por
+     * sesión (más antigua primero), listo para alimentar decideAdaptation().
+     * `limitSesiones` acota cuántas sesiones recientes se consideran.
+     */
+    findRecentSessionLogs(userId: string, exerciseId: string, limitSesiones: number): Promise<SessionLog[]>;
+    /**
+     * Crea la sesión de entrenamiento (botón "INICIAR ENTRENAMIENTO", sección
+     * 13/14). Debe existir ANTES de poder registrar series con logSet(), ya
+     * que ExerciseSet cuelga de una sesión real. `workoutDayId` es el id del
+     * día ya persistido (WorkoutDayPlan.id) sobre el que se entrena hoy.
+     */
+    startSession(input: StartSessionInput): Promise<StoredSession>;
+    /**
+     * Cierra la sesión y calcula el resumen final (sección "estadísticas al
+     * finalizar": peso total levantado, series realizadas, tiempo total). El
+     * cálculo se hace aquí, no en el cliente, para que el número mostrado sea
+     * siempre trazable a los datos realmente persistidos.
+     */
+    finishSession(input: FinishSessionInput): Promise<SessionSummary>;
+    /**
+     * Última sesión COMPLETADA del usuario sobre alguno de esos días (los del
+     * plan activo). Sirve para saber cuál es la próxima sesión del plan.
+     */
+    findLastCompletedSession(userId: string, workoutDayIds: string[]): Promise<StoredSession | null>;
+}
+export interface StartSessionInput {
+    userId: string;
+    workoutDayId: string;
+}
+export interface StoredSession {
+    id: string;
+    userId: string;
+    workoutDayId: string;
+    fecha: Date;
+    estado: 'en_progreso' | 'completada' | 'parcial' | 'omitida';
+}
+export interface FinishSessionInput {
+    sessionId: string;
+    userId: string;
+    duracionRealSeg: number;
+    fatigaPercibida?: number | null;
+    estado?: 'completada' | 'parcial';
+}
+export interface SessionSummary {
+    sessionId: string;
+    duracionRealSeg: number;
+    totalSeries: number;
+    totalRepeticiones: number;
+    volumenTotalKg: number;
+    ejerciciosRealizados: number;
+    estado: 'completada' | 'parcial';
+}
+export interface RecoveryRepositoryPort {
+    /** Promedio de recovery score de los últimos N registros del usuario. */
+    averageRecentRecoveryScore(userId: string, ultimosNRegistros: number): Promise<number>;
+}
+export interface StoredUser {
+    id: string;
+    email: string;
+    nombre: string;
+    createdAt: Date;
+}
+export interface CreateUserInput {
+    id: string;
+    email: string;
+    nombre: string;
+}
+export interface UserRepositoryPort {
+    create(input: CreateUserInput): Promise<StoredUser>;
+    findById(id: string): Promise<StoredUser | null>;
+    existsById(id: string): Promise<boolean>;
+}
+export interface ProfileRepositoryPort {
+    findByUser(userId: string): Promise<UserSettings | null>;
+    /** Crea o reemplaza los ajustes completos del usuario. */
+    save(userId: string, settings: UserSettings): Promise<UserSettings>;
+    /** Mantiene al día el peso actual del perfil; no hace nada si aún no hay perfil. */
+    updateCurrentWeight(userId: string, pesoKg: number): Promise<void>;
+}
+export interface WeightRecord {
+    id: string;
+    fecha: Date;
+    pesoKg: number;
+}
+export interface ProgressRepositoryPort {
+    addWeight(userId: string, pesoKg: number): Promise<WeightRecord>;
+    /** Los últimos `limit` registros de peso, ordenados del más antiguo al más reciente. */
+    listWeights(userId: string, limit: number): Promise<WeightRecord[]>;
+}
