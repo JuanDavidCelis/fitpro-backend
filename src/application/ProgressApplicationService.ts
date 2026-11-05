@@ -1,48 +1,36 @@
-import { Injectable } from '@nestjs/common';
-import { ProgressRepositoryPort, StoredProgressRecord } from '../persistence/ports/repositories';
+import { BadRequestException } from '@nestjs/common';
+import { ProfileRepositoryPort, ProgressRepositoryPort, WeightRecord } from '../persistence/ports/repositories';
 
-export interface ProgressResponse {
-  records: StoredProgressRecord[];
-  currentWeightKg: number | null;
-  targetWeightKg: number | null;
-  weightDeltaKg: number | null;
-  progressPercent: number | null;
+const MAX_REGISTROS = 400;
+
+export interface WeightHistory {
+  pesoObjetivoKg: number | null;
+  registros: WeightRecord[];
 }
 
-/**
- * Orquesta la lectura/creación de registros de progreso (peso, medidas).
- * Calcula deltas y porcentaje de progreso hacia el peso objetivo.
- */
-@Injectable()
 export class ProgressApplicationService {
-  constructor(private readonly progressRepo: ProgressRepositoryPort) {}
+  constructor(
+    private readonly progressRepo: ProgressRepositoryPort,
+    private readonly profileRepo: ProfileRepositoryPort,
+  ) {}
 
-  async getProgress(userId: string, targetWeightKg: number | null): Promise<ProgressResponse> {
-    const records = await this.progressRepo.findByUser(userId);
-    const currentWeightKg = records.length > 0 ? records[records.length - 1].pesoKg : null;
-    const weightDeltaKg =
-      currentWeightKg !== null && targetWeightKg !== null
-        ? currentWeightKg - targetWeightKg
-        : null;
-    const progressPercent =
-      currentWeightKg !== null && targetWeightKg !== null && currentWeightKg !== 0
-        ? (1 - weightDeltaKg! / currentWeightKg) * 100
-        : null;
-
-    return {
-      records,
-      currentWeightKg,
-      targetWeightKg,
-      weightDeltaKg,
-      progressPercent,
-    };
+  async addWeight(userId: string, body: unknown): Promise<WeightRecord> {
+    const crudo = (body as { pesoKg?: unknown } | null)?.pesoKg;
+    if (typeof crudo !== 'number' || !Number.isFinite(crudo) || crudo < 20 || crudo > 400) {
+      throw new BadRequestException('El peso debe ser un número entre 20 y 400 kg.');
+    }
+    const pesoKg = Math.round(crudo * 10) / 10;
+    const registro = await this.progressRepo.addWeight(userId, pesoKg);
+    // El peso del perfil refleja siempre el último registrado.
+    await this.profileRepo.updateCurrentWeight(userId, pesoKg);
+    return registro;
   }
 
-  async registerWeight(
-    userId: string,
-    pesoKg: number | null,
-    fuente: string = 'manual',
-  ): Promise<StoredProgressRecord> {
-    return this.progressRepo.create(userId, { pesoKg, fuente });
+  async getHistory(userId: string): Promise<WeightHistory> {
+    const [registros, perfil] = await Promise.all([
+      this.progressRepo.listWeights(userId, MAX_REGISTROS),
+      this.profileRepo.findByUser(userId),
+    ]);
+    return { pesoObjetivoKg: perfil?.pesoObjetivoKg ?? null, registros };
   }
 }

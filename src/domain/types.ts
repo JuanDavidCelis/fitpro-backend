@@ -20,6 +20,15 @@ export type PatronMovimiento =
   | 'core'
   | 'cardio';
 
+export type AreaCorporal =
+  | 'hombro'
+  | 'codo'
+  | 'muneca'
+  | 'espalda_baja'
+  | 'cadera'
+  | 'rodilla'
+  | 'tobillo';
+
 export type GrupoMuscular =
   | 'pecho'
   | 'espalda'
@@ -64,9 +73,6 @@ export interface Exercise {
   etiquetas: string[];
   // IDs de ejercicios candidatos a sustitución, en orden de preferencia.
   alternativas: string[];
-  // URLs de imagen y GIF animado del ejercicio (fuente: Nielide/exercises-dataset).
-  imageUrl?: string;
-  gifUrl?: string;
 }
 
 export interface Limitaciones {
@@ -138,8 +144,9 @@ export interface WorkoutExercisePlan {
   // mostrarlos según el nivel del usuario.
   instrucciones: string;
   erroresComunes: string[];
-  imageUrl?: string;
-  gifUrl?: string;
+  // Se agregan al responder (no se guardan): la base de las URLs es configurable.
+  imagenUrl?: string | null;
+  gifUrl?: string | null;
 }
 
 export interface CardioBlockPlan {
@@ -194,4 +201,9 @@ export interface UserSettings {
   minutosPorSesion: number;
   equipamiento: Equipamiento[];
   pesoObjetivoKg: number | null;
+  // Salud y preferencias (cuestionario de seguridad, sección 10 del diseño)
+  lesiones: AreaCorporal[];
+  dolorActual: AreaCorporal[];
+  condicionMedica: boolean;
+  musculosPrioritarios: GrupoMuscular[];
 }

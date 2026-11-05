@@ -31,6 +31,25 @@ export function generateWorkoutPlan(input: EngineInput): WorkoutPlanResult {
   warnings.push(...nivelResult.warnings);
   const nivelPrograma = nivelResult.nivelPrograma;
 
+  // Seguridad (sección 10/38 del diseño): la app no diagnostica ni reemplaza a un profesional.
+  const lim = input.limitaciones;
+  if (lim.requiereConsultaProfesional) {
+    warnings.push({
+      codigo: 'CONSULTA_PROFESIONAL',
+      mensaje:
+        'Indicaste dolor actual o una condición médica. Esta app no diagnostica ni reemplaza a un profesional: ' +
+        'consulta a un médico o fisioterapeuta antes de entrenar y detén cualquier ejercicio que te cause dolor.',
+    });
+  }
+  const zonas = [...new Set([...lim.lesiones, ...lim.dolorActual])];
+  if (zonas.length > 0) {
+    warnings.push({
+      codigo: 'EJERCICIOS_OMITIDOS',
+      mensaje: `Omitimos ejercicios que cargan las zonas donde indicaste molestias (${zonas.join(', ').replace(/_/g, ' ')}).`,
+    });
+    trace.push(`Zonas declaradas: ${zonas.join(', ')} → patrones excluidos: ${lim.patronesExcluidos.join(', ') || 'ninguno'}.`);
+  }
+
   // Paso 2
   const splitResult = selectSplit(input);
   trace.push(...splitResult.trace);
@@ -113,8 +132,6 @@ function buildDay(
         motivoSustitucion: null,
         instrucciones: exercise.instrucciones,
         erroresComunes: exercise.erroresComunes,
-        imageUrl: exercise.imageUrl,
-        gifUrl: exercise.gifUrl,
       });
     });
   }

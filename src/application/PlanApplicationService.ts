@@ -1,4 +1,5 @@
-import { EngineInput, WorkoutPlanResult } from '../domain/types';
+import { EngineInput, UserSettings, WorkoutPlanResult } from '../domain/types';
+import { construirLimitaciones } from '../domain/health';
 import { generateWorkoutPlan } from '../engine/generatePlan';
 import { PlanRepositoryPort, RecoveryRepositoryPort, StoredPlan } from '../persistence/ports/repositories';
 import { SessionRepositoryPort } from '../persistence/ports/repositories';
@@ -28,6 +29,34 @@ export class PlanApplicationService {
     const input: EngineInput = { ...partialInput, historial };
     const plan: WorkoutPlanResult = generateWorkoutPlan(input);
     return this.planRepo.saveNewVersion(userId, plan);
+  }
+
+  /**
+   * Genera y guarda una NUEVA versión de la rutina a partir de los ajustes
+   * guardados del usuario (nivel, objetivo, días, equipo, salud...). Es el
+   * único camino por el que se regenera la rutina al cambiar la configuración.
+   */
+  async generateFromSettings(userId: string, s: UserSettings): Promise<StoredPlan> {
+    return this.generateAndPersist(userId, {
+      perfil: {
+        edad: s.edad,
+        sexo: s.sexo,
+        pesoKg: s.pesoKg,
+        alturaCm: s.alturaCm,
+        nivelExperiencia: s.nivelExperiencia,
+      },
+      objetivo: s.objetivo,
+      disponibilidad: { diasPorSemana: s.diasPorSemana, minutosPorSesion: s.minutosPorSesion },
+      equipamientoDisponible: s.equipamiento,
+      preferencias: {
+        musculosPrioritarios: s.musculosPrioritarios,
+        modalidadCardioPreferida: [],
+        ejerciciosExcluidosIds: [],
+        ejerciciosFavoritosIds: [],
+        solicitaOlympia: false, // Olympia no se pide desde la app: ver levelSelection
+      },
+      limitaciones: construirLimitaciones(s.lesiones, s.dolorActual, s.condicionMedica),
+    });
   }
 
   async getActivePlan(userId: string): Promise<StoredPlan | null> {

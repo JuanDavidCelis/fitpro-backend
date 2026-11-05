@@ -6,6 +6,7 @@ import { PlanApplicationService } from '../../application/PlanApplicationService
 import { GeneratePlanDto, validateGeneratePlanDto } from '../dto/generate-plan.dto';
 import { UsersModule, USER_APPLICATION_SERVICE } from '../users/users.module';
 import { UserApplicationService } from '../../application/UserApplicationService';
+import { withMedia } from '../../application/media';
 import { AuthModule } from '../../auth/auth.module';
 import { SupabaseAuthGuard } from '../../auth/SupabaseAuthGuard';
 import { SameUserGuard } from '../../auth/SameUserGuard';
@@ -20,7 +21,7 @@ import { SameUserGuard } from '../../auth/SameUserGuard';
 // (en vez de en persistence.module.ts) porque PlanApplicationService
 // pertenece a la capa de aplicación, no a la de persistencia — solo
 // depende de los puertos, nunca de Prisma directamente.
-const PLAN_APPLICATION_SERVICE = Symbol('PLAN_APPLICATION_SERVICE');
+export const PLAN_APPLICATION_SERVICE = Symbol('PLAN_APPLICATION_SERVICE');
 
 // Orden de guards: primero autentica (¿quién eres?), luego autoriza
 // (¿puedes operar sobre este :userId?). SameUserGuard depende de que
@@ -44,7 +45,7 @@ class PlansController {
     if (errores.length > 0) {
       throw new BadRequestException({ message: 'Datos de entrada inválidos', errores });
     }
-    return this.service.generateAndPersist(userId, {
+    const stored = await this.service.generateAndPersist(userId, {
       perfil: dto.perfil,
       objetivo: dto.objetivo,
       disponibilidad: dto.disponibilidad,
@@ -52,6 +53,7 @@ class PlansController {
       preferencias: dto.preferencias,
       limitaciones: dto.limitaciones,
     });
+    return withMedia(stored);
   }
 
   @Get('active')
@@ -63,13 +65,13 @@ class PlansController {
       // distingue así "aún no tienes plan" de un error real.
       throw new NotFoundException('No tienes un plan activo. Genera uno primero.');
     }
-    return plan;
+    return withMedia(plan);
   }
 
   @Get('history')
   async getHistory(@Param('userId') userId: string) {
     await this.users.assertExists(userId);
-    return this.service.getVersionHistory(userId);
+    return (await this.service.getVersionHistory(userId)).map(withMedia);
   }
 }
 
@@ -84,5 +86,6 @@ class PlansController {
       inject: [PLAN_REPOSITORY, RECOVERY_REPOSITORY],
     },
   ],
+  exports: [PLAN_APPLICATION_SERVICE],
 })
 export class PlansModule {}

@@ -26,8 +26,6 @@ async function main() {
           erroresComunes: ex.erroresComunes,
           etiquetas: ex.etiquetas,
           alternativas: ex.alternativas,
-          imageUrl: ex.imageUrl ?? null,
-          gifUrl: ex.gifUrl ?? null,
         },
         create: {
           id: ex.id,
@@ -41,8 +39,6 @@ async function main() {
           erroresComunes: ex.erroresComunes,
           etiquetas: ex.etiquetas,
           alternativas: ex.alternativas,
-          imageUrl: ex.imageUrl ?? null,
-          gifUrl: ex.gifUrl ?? null,
         },
       });
     }

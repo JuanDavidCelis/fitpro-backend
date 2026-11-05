@@ -18,6 +18,9 @@ const SEMANAS_MIN_PARA_ADVANCED = 12;
 const ADHERENCIA_MIN_PARA_ADVANCED = 0.75;
 const RECOVERY_MIN_PARA_OLYMPIA = 65;
 const DIAS_MIN_PARA_OLYMPIA = 6;
+// Olympia exige historial REAL: sin registros de recuperación todavía, el "score"
+// es un valor neutro por defecto y no debe bastar para desbloquear un programa de alta exigencia.
+const SEMANAS_MIN_PARA_OLYMPIA = 8;
 
 /**
  * REGLA DURA: un usuario principiante NUNCA recibe Advanced u Olympia,
@@ -69,6 +72,7 @@ export function selectProgramLevel(input: EngineInput): LevelSelectionResult {
   if (input.preferencias.solicitaOlympia) {
     const cumpleOlympia =
       historial !== null &&
+      historial.semanasEntrenando >= SEMANAS_MIN_PARA_OLYMPIA &&
       historial.recoveryScorePromedio >= RECOVERY_MIN_PARA_OLYMPIA &&
       input.disponibilidad.diasPorSemana >= DIAS_MIN_PARA_OLYMPIA &&
       historial.tendenciaRendimiento !== 'bajando';
@@ -81,12 +85,12 @@ export function selectProgramLevel(input: EngineInput): LevelSelectionResult {
     }
 
     trace.push(
-      'Solicitaste Olympia pero no se cumplen los requisitos (disponibilidad, recovery score o tendencia de rendimiento) → se degrada a Advanced.',
+      'Solicitaste Olympia pero no se cumplen los requisitos (≥ 8 semanas entrenando, disponibilidad, recovery score o tendencia de rendimiento) → se degrada a Advanced.',
     );
     warnings.push({
       codigo: 'OLYMPIA_DEGRADADO_A_ADVANCED',
       mensaje:
-        `El nivel Olympia requiere al menos ${DIAS_MIN_PARA_OLYMPIA} días/semana, un recovery score ` +
+        `El nivel Olympia requiere al menos ${SEMANAS_MIN_PARA_OLYMPIA} semanas entrenando, ${DIAS_MIN_PARA_OLYMPIA} días/semana, un recovery score ` +
         `promedio ≥ ${RECOVERY_MIN_PARA_OLYMPIA}/100 y una tendencia de rendimiento estable o positiva. ` +
         'Por ahora te damos un programa Advanced; podrás optar a Olympia cuando se cumplan esas condiciones.',
     });

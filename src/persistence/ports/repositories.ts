@@ -1,4 +1,4 @@
-import { WorkoutPlanResult } from '../../domain/types';
+import { UserSettings, WorkoutPlanResult } from '../../domain/types';
 import { SessionLog } from '../../engine/adaptationEngine';
 
 // ============================================================================
@@ -145,69 +145,22 @@ export interface UserRepositoryPort {
   existsById(id: string): Promise<boolean>;
 }
 
-// ----------------------- UserProfile -----------------------
-
-/**
- * Perfil completo del usuario: datos físicos, limitaciones y preferencias.
- * Se crea una vez que el usuario completa el onboarding (registro inicial).
- * Es actualizable en cualquier momento desde la app.
- */
-export interface UserProfileData {
-  edad: number;
-  sexo: string;
-  pesoKg: number;
-  alturaCm: number;
-  nivelExperiencia: string;
-  lesiones: string[];
-  dolorActual: string[];
-  requiereConsulta: boolean;
-  musculosPrioritarios: string[];
-  pesoObjetivoKg: number | null;
+export interface ProfileRepositoryPort {
+  findByUser(userId: string): Promise<UserSettings | null>;
+  /** Crea o reemplaza los ajustes completos del usuario. */
+  save(userId: string, settings: UserSettings): Promise<UserSettings>;
+  /** Mantiene al día el peso actual del perfil; no hace nada si aún no hay perfil. */
+  updateCurrentWeight(userId: string, pesoKg: number): Promise<void>;
 }
 
-export interface StoredUserProfile {
+export interface WeightRecord {
   id: string;
-  userId: string;
-  user: {
-    id: string;
-    email: string;
-    nombre: string;
-  };
-  edad: number;
-  sexo: string;
-  pesoKg: number;
-  alturaCm: number;
-  nivelExperiencia: string;
-  lesiones: string[];
-  dolorActual: string[];
-  requiereConsulta: boolean;
-  musculosPrioritarios: string[];
-  pesoObjetivoKg: number | null;
-  updatedAt: Date;
-}
-
-export interface UserProfileRepositoryPort {
-  /** Devuelve el perfil del usuario, o null si nunca lo ha completado. */
-  findByUserId(userId: string): Promise<StoredUserProfile | null>;
-  /** Crea o actualiza (upsert) el perfil completo del usuario. */
-  upsert(userId: string, data: UserProfileData): Promise<StoredUserProfile>;
-}
-
-// ----------------------- ProgressRecord -----------------------
-
-export interface StoredProgressRecord {
-  id: string;
-  userId: string;
   fecha: Date;
-  pesoKg: number | null;
-  medidas: Record<string, number> | null;
-  fotoUrls: string[];
-  fuente: string;
+  pesoKg: number;
 }
 
 export interface ProgressRepositoryPort {
-  /** Devuelve todos los registros de progreso del usuario, ordenados por fecha ascendente. */
-  findByUser(userId: string): Promise<StoredProgressRecord[]>;
-  /** Crea un nuevo registro de progreso (peso manual o automático). */
-  create(userId: string, data: { pesoKg?: number | null; medidas?: Record<string, number> | null; fuente?: string }): Promise<StoredProgressRecord>;
+  addWeight(userId: string, pesoKg: number): Promise<WeightRecord>;
+  /** Los últimos `limit` registros de peso, ordenados del más antiguo al más reciente. */
+  listWeights(userId: string, limit: number): Promise<WeightRecord[]>;
 }

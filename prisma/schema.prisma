@@ -107,7 +107,13 @@ model UserProfile {
   dolorActual        Json              @default("[]")
   requiereConsulta   Boolean           @default(false)
   musculosPrioritarios Json            @default("[]")
+  // Ajustes editables desde la app (fuente de verdad para regenerar la rutina)
+  objetivo           ObjetivoTipo      @default(perdida_grasa)
+  diasPorSemana      Int               @default(5)
+  minutosPorSesion   Int               @default(45)
+  equipamiento       Json              @default("[]")
   pesoObjetivoKg     Float?
+  condicionMedica    Boolean           @default(false)
   updatedAt          DateTime          @updatedAt
 }
 
@@ -181,8 +187,6 @@ model Exercise {
   etiquetas              Json              @default("[]")
   alternativas           Json              @default("[]")
   videoUrl               String?
-  imageUrl               String?
-  gifUrl                 String?
 
   workoutExercises WorkoutExercise[]
 }
@@ -279,6 +283,8 @@ model ProgressRecord {
   medidas   Json?
   fotoUrls  Json?    @default("[]") // rutas cifradas en storage, sección 34
   fuente    String   @default("manual")
+
+  @@index([userId, fecha])
 }
 
 model RecoveryRecord {

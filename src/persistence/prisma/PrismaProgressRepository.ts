@@ -1,48 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import {
-  ProgressRepositoryPort,
-  StoredProgressRecord,
-} from '../ports/repositories';
+import { ProgressRepositoryPort, WeightRecord } from '../ports/repositories';
 import { PrismaService } from './PrismaService';
 
-/** ⚠️ Implementación no verificada en ejecución (ver PrismaService.ts). */
+/** Registros de peso en la tabla ProgressRecord (filas pequeñas: ~1 por mes por usuario). */
 @Injectable()
 export class PrismaProgressRepository implements ProgressRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findByUser(userId: string): Promise<StoredProgressRecord[]> {
+  async addWeight(userId: string, pesoKg: number): Promise<WeightRecord> {
+    const r = await this.prisma.progressRecord.create({ data: { userId, pesoKg, fuente: 'manual' } });
+    return { id: r.id, fecha: r.fecha, pesoKg: r.pesoKg as number };
+  }
+
+  async listWeights(userId: string, limit: number): Promise<WeightRecord[]> {
+    // Se piden los más recientes y se devuelven en orden cronológico.
     const rows = await this.prisma.progressRecord.findMany({
-      where: { userId },
-      orderBy: { fecha: 'asc' },
+      where: { userId, pesoKg: { not: null } },
+      orderBy: { fecha: 'desc' },
+      take: limit,
     });
-    return (rows as any[]).map((r) => this.toStored(r));
-  }
-
-  async create(
-    userId: string,
-    data: { pesoKg?: number | null; medidas?: Record<string, number> | null; fuente?: string },
-  ): Promise<StoredProgressRecord> {
-    const row = await this.prisma.progressRecord.create({
-      data: {
-        userId,
-        pesoKg: data.pesoKg ?? null,
-        medidas: data.medidas ?? undefined,
-        fotoUrls: [],
-        fuente: data.fuente ?? 'manual',
-      },
-    });
-    return this.toStored(row as any);
-  }
-
-  private toStored(row: any): StoredProgressRecord {
-    return {
-      id: row.id,
-      userId: row.userId,
-      fecha: row.fecha,
-      pesoKg: row.pesoKg ?? null,
-      medidas: row.medidas ?? null,
-      fotoUrls: Array.isArray(row.fotoUrls) ? (row.fotoUrls as string[]) : [],
-      fuente: row.fuente,
-    };
+    return (rows as any[]).reverse().map((r) => ({ id: r.id, fecha: r.fecha, pesoKg: r.pesoKg as number }));
   }
 }

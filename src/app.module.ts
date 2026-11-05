@@ -5,15 +5,10 @@ import { SessionsModule } from './api/sessions/sessions.module';
 import { UsersModule } from './api/users/users.module';
 import { ProfileModule } from './api/profile/profile.module';
 import { ProgressModule } from './api/progress/progress.module';
+// Pendiente (fase 1 backend, ver roadmap):
+// import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [
-    WorkoutEngineModule,
-    UsersModule,
-    PlansModule,
-    SessionsModule,
-    ProfileModule,
-    ProgressModule,
-  ],
+  imports: [WorkoutEngineModule, UsersModule, PlansModule, SessionsModule, ProfileModule, ProgressModule],
 })
 export class AppModule {}

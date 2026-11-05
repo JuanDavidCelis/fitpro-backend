@@ -1,58 +1,60 @@
-import { Body, Controller, Get, Inject, Module, Param, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Module, Param, Put, Query, UseGuards } from '@nestjs/common';
 import { PersistenceModule } from '../../persistence/persistence.module';
-import { USER_PROFILE_REPOSITORY } from '../../persistence/tokens';
-import { UserProfileRepositoryPort } from '../../persistence/ports/repositories';
-import { UserProfileApplicationService } from '../../application/UserProfileApplicationService';
-import { UsersModule, USER_APPLICATION_SERVICE } from '../users/users.module';
+import { PROFILE_REPOSITORY } from '../../persistence/tokens';
+import { ProfileRepositoryPort } from '../../persistence/ports/repositories';
+import { PlanApplicationService } from '../../application/PlanApplicationService';
+import { ProfileApplicationService } from '../../application/ProfileApplicationService';
 import { UserApplicationService } from '../../application/UserApplicationService';
+import { withMedia } from '../../application/media';
 import { AuthModule } from '../../auth/auth.module';
 import { SupabaseAuthGuard } from '../../auth/SupabaseAuthGuard';
 import { SameUserGuard } from '../../auth/SameUserGuard';
-import { UpdateProfileDto } from '../dto/profile.dto';
+import { PlansModule, PLAN_APPLICATION_SERVICE } from '../plans/plans.module';
+import { UsersModule, USER_APPLICATION_SERVICE } from '../users/users.module';
 
-const USER_PROFILE_APPLICATION_SERVICE = Symbol('USER_PROFILE_APPLICATION_SERVICE');
+const PROFILE_APPLICATION_SERVICE = Symbol('PROFILE_APPLICATION_SERVICE');
 
 @Controller('users/:userId/profile')
 @UseGuards(SupabaseAuthGuard, SameUserGuard)
 class ProfileController {
   constructor(
-    @Inject(USER_PROFILE_APPLICATION_SERVICE) private readonly service: UserProfileApplicationService,
+    @Inject(PROFILE_APPLICATION_SERVICE) private readonly service: ProfileApplicationService,
     @Inject(USER_APPLICATION_SERVICE) private readonly users: UserApplicationService,
   ) {}
 
-  /**
-   * Devuelve el perfil completo del usuario (o null si no lo ha completado).
-   * El cliente usa esto para saber si debe mostrar el onboarding.
-   */
   @Get()
-  async getProfile(@Param('userId') userId: string) {
+  async get(@Param('userId') userId: string) {
     await this.users.assertExists(userId);
     return this.service.getProfile(userId);
   }
 
   /**
-   * Crea o actualiza (upsert) el perfil completo del usuario.
-   * Idempotente: si el perfil no existe lo crea; si existe lo actualiza
-   * con los campos provistos, manteniendo los no provistados.
+   * Guarda todos los ajustes del usuario (datos, nivel, objetivo, días,
+   * equipo, salud, peso objetivo). Si algo afecta a la rutina, devuelve la
+   * rutina nueva en `plan`; si no, `plan` es null.
    */
   @Put()
-  async upsert(@Param('userId') userId: string, @Body() body: UpdateProfileDto) {
+  async put(
+    @Param('userId') userId: string,
+    @Body() body: unknown,
+    @Query('forzar') forzar?: string,
+  ) {
     await this.users.assertExists(userId);
-    return this.service.upsertProfile(userId, body);
+    const r = await this.service.saveProfile(userId, body, forzar === 'true');
+    return { perfil: r.perfil, planRegenerado: r.planRegenerado, plan: r.plan ? withMedia(r.plan) : null };
   }
 }
 
 @Module({
-  imports: [PersistenceModule, UsersModule, AuthModule],
+  imports: [PersistenceModule, UsersModule, AuthModule, PlansModule],
   controllers: [ProfileController],
   providers: [
     {
-      provide: USER_PROFILE_APPLICATION_SERVICE,
-      useFactory: (profileRepo: UserProfileRepositoryPort) =>
-        new UserProfileApplicationService(profileRepo),
-      inject: [USER_PROFILE_REPOSITORY],
+      provide: PROFILE_APPLICATION_SERVICE,
+      useFactory: (repo: ProfileRepositoryPort, plans: PlanApplicationService) =>
+        new ProfileApplicationService(repo, plans),
+      inject: [PROFILE_REPOSITORY, PLAN_APPLICATION_SERVICE],
     },
   ],
-  exports: [USER_PROFILE_APPLICATION_SERVICE],
 })
 export class ProfileModule {}

@@ -1,4 +1,5 @@
 import { CardioBlockPlan, EngineInput, Equipamiento } from '../domain/types';
+import { evitaAltoImpacto } from '../domain/health';
 
 interface CardioOption {
   modalidad: string;
@@ -32,11 +33,12 @@ export function selectCardio(
   const preferencias = new Set(input.preferencias.modalidadCardioPreferida.map((p) => p.toLowerCase()));
   const recoveryBajo = (input.historial?.recoveryScorePromedio ?? 100) < 50;
   const nivelAltoSuficiente = nivelPrograma !== 'foundation';
+  const sinImpacto = evitaAltoImpacto(input.limitaciones); // molestias en rodilla/cadera/tobillo/espalda baja
 
   const elegibles = OPCIONES_CARDIO.filter((op) => {
     const tieneEquipo = op.requiere.every((r) => equipamientoDisponible.has(r));
     const nivelOk = op.nivelMinimo === 'foundation' || nivelAltoSuficiente;
-    const impactoOk = !recoveryBajo || op.impacto === 'bajo';
+    const impactoOk = (!recoveryBajo && !sinImpacto) || op.impacto === 'bajo';
     return tieneEquipo && nivelOk && impactoOk;
   });
 
@@ -53,6 +55,7 @@ export function selectCardio(
 
   const motivoPartes: string[] = [];
   if (preferido) motivoPartes.push('preferencia del usuario');
+  if (sinImpacto) motivoPartes.push('molestias declaradas → solo cardio de bajo impacto');
   if (recoveryBajo) motivoPartes.push('recovery score reciente bajo → se prioriza bajo impacto/intensidad');
   if (!nivelAltoSuficiente) motivoPartes.push('nivel principiante → modalidades de bajo impacto');
   if (motivoPartes.length === 0) motivoPartes.push('modalidad sostenible disponible con el equipamiento actual');

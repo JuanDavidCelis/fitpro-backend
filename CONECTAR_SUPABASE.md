@@ -67,3 +67,22 @@ El modo falso **solo existe en local**; con `NODE_ENV=production` o en Vercel se
 ```bash
 npm test
 ```
+
+## Actualización: perfil, peso y imágenes
+
+La tabla `UserProfile` ahora guarda los ajustes editables del usuario (objetivo,
+días, minutos, equipo, peso objetivo, condición médica) y `ProgressRecord` el
+historial de peso. Tras subir este código:
+
+```bash
+npx prisma db push      # solo AGREGA columnas con valores por defecto: no borra datos
+npx prisma db seed      # actualiza el catálogo (necesario si no lo corriste tras agregar ejercicios)
+```
+
+El script `prisma/supabase-setup.sql` no necesita repetirse (no hay tablas nuevas).
+
+Endpoints nuevos (todos exigen token y que el `:userId` sea el tuyo):
+- `GET/PUT /users/:id/profile` — PUT guarda TODO y regenera la rutina solo si cambió
+  algo que la afecta (nivel, objetivo, días, minutos, equipo, salud, músculos prioritarios).
+- `GET/POST /users/:id/progress/weight` — historial de peso (+ peso objetivo) y registro.
+- Los planes incluyen `instrucciones`, `erroresComunes`, `imagenUrl` y `gifUrl`.
