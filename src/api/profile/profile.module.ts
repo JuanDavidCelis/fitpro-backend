@@ -11,6 +11,7 @@ import { SupabaseAuthGuard } from '../../auth/SupabaseAuthGuard';
 import { SameUserGuard } from '../../auth/SameUserGuard';
 import { PlansModule, PLAN_APPLICATION_SERVICE } from '../plans/plans.module';
 import { UsersModule, USER_APPLICATION_SERVICE } from '../users/users.module';
+import { UserSettingsDto } from '../dto/user-settings.dto';
 
 const PROFILE_APPLICATION_SERVICE = Symbol('PROFILE_APPLICATION_SERVICE');
 
@@ -36,7 +37,7 @@ class ProfileController {
   @Put()
   async put(
     @Param('userId') userId: string,
-    @Body() body: unknown,
+    @Body() body: UserSettingsDto,
     @Query('forzar') forzar?: string,
   ) {
     await this.users.assertExists(userId);

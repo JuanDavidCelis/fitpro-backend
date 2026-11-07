@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Module, Param, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Inject, Module, Param, Post, UseGuards } from '@nestjs/common';
 import { PersistenceModule } from '../../persistence/persistence.module';
 import { PROFILE_REPOSITORY, PROGRESS_REPOSITORY } from '../../persistence/tokens';
 import { ProfileRepositoryPort, ProgressRepositoryPort } from '../../persistence/ports/repositories';
@@ -8,6 +8,7 @@ import { AuthModule } from '../../auth/auth.module';
 import { SupabaseAuthGuard } from '../../auth/SupabaseAuthGuard';
 import { SameUserGuard } from '../../auth/SameUserGuard';
 import { UsersModule, USER_APPLICATION_SERVICE } from '../users/users.module';
+import { AddWeightRequestDto, validateAddWeightDto } from '../dto/add-weight.dto';
 
 const PROGRESS_APPLICATION_SERVICE = Symbol('PROGRESS_APPLICATION_SERVICE');
 
@@ -27,8 +28,12 @@ class ProgressController {
   }
 
   @Post('weight')
-  async add(@Param('userId') userId: string, @Body() body: unknown) {
+  async add(@Param('userId') userId: string, @Body() body: AddWeightRequestDto) {
     await this.users.assertExists(userId);
+    const errores = validateAddWeightDto(body);
+    if (errores.length > 0) {
+      throw new BadRequestException({ message: 'Datos de entrada inválidos', errores });
+    }
     return this.service.addWeight(userId, body);
   }
 }
