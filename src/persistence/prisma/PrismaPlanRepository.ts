@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { WorkoutPlanResult } from '../../domain/types';
 import { EXERCISES } from '../../data/exercises';
 import { PlanRepositoryPort, StoredPlan } from '../ports/repositories';
@@ -136,24 +136,24 @@ export class PrismaPlanRepository implements PlanRepositoryPort {
         include: DIA_INCLUDE,
       });
       if (!plan) {
-        throw new Error('No active plan found for user');
+        throw new NotFoundException('No active plan found for user');
       }
 
       // 2. Encontrar el día y el ejercicio a sustituir
       const dia = plan.dias.find((d: any) => d.id === workoutDayId);
       if (!dia) {
-        throw new Error('Workout day not found in active plan');
+        throw new NotFoundException(`Workout day ${workoutDayId} not found in active plan`);
       }
 
       const ejercicioActual = dia.ejercicios.find((e: any) => e.exerciseId === oldExerciseId);
       if (!ejercicioActual) {
-        throw new Error('Exercise not found in the specified workout day');
+        throw new NotFoundException(`Exercise ${oldExerciseId} not found in workout day ${workoutDayId}`);
       }
 
       // 3. Obtener el nuevo ejercicio del catálogo (para validar que existe y obtener sus datos)
       const nuevoEjercicio = await tx.exercise.findUnique({ where: { id: newExerciseId } });
       if (!nuevoEjercicio) {
-        throw new Error('Replacement exercise not found in catalog');
+        throw new NotFoundException(`Replacement exercise ${newExerciseId} not found in catalog`);
       }
 
       // 4. Eliminar el ejercicio antiguo y crear el nuevo en su lugar
