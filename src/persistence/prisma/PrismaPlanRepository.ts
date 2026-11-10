@@ -122,6 +122,71 @@ export class PrismaPlanRepository implements PlanRepositoryPort {
     return (rows as PrismaWorkoutPlanRow[]).map((r) => this.toStoredPlan(r));
   }
 
+  async substituteExercise(
+    userId: string,
+    workoutDayId: string,
+    oldExerciseId: string,
+    newExerciseId: string,
+    motivo: string,
+  ): Promise<StoredPlan> {
+    return this.prisma.$transaction(async (tx: any) => {
+      // 1. Obtener el plan activo con sus días y ejercicios
+      const plan = await tx.workoutPlan.findFirst({
+        where: { userId, activo: true },
+        include: DIA_INCLUDE,
+      });
+      if (!plan) {
+        throw new Error('No active plan found for user');
+      }
+
+      // 2. Encontrar el día y el ejercicio a sustituir
+      const dia = plan.dias.find((d: any) => d.id === workoutDayId);
+      if (!dia) {
+        throw new Error('Workout day not found in active plan');
+      }
+
+      const ejercicioActual = dia.ejercicios.find((e: any) => e.exerciseId === oldExerciseId);
+      if (!ejercicioActual) {
+        throw new Error('Exercise not found in the specified workout day');
+      }
+
+      // 3. Obtener el nuevo ejercicio del catálogo (para validar que existe y obtener sus datos)
+      const nuevoEjercicio = await tx.exercise.findUnique({ where: { id: newExerciseId } });
+      if (!nuevoEjercicio) {
+        throw new Error('Replacement exercise not found in catalog');
+      }
+
+      // 4. Eliminar el ejercicio antiguo y crear el nuevo en su lugar
+      await tx.workoutExercise.delete({ where: { id: ejercicioActual.id } });
+
+      const nuevoEjercicioPlan = await tx.workoutExercise.create({
+        data: {
+          dayId: workoutDayId,
+          exerciseId: newExerciseId,
+          orden: ejercicioActual.orden,
+          series: ejercicioActual.series,
+          repsMin: ejercicioActual.repsMin,
+          repsMax: ejercicioActual.repsMax,
+          descansoSeg: ejercicioActual.descansoSeg,
+          rirObjetivo: ejercicioActual.rirObjetivo,
+          esSuperset: ejercicioActual.esSuperset,
+          grupoSupersetId: ejercicioActual.grupoSupersetId,
+          sustituidoDesde: oldExerciseId,
+          motivoSustitucion: motivo,
+        },
+        include: { exercise: true },
+      });
+
+      // 5. Reconstruir el plan completo actualizado y devolverlo
+      const planActualizado = await tx.workoutPlan.findUnique({
+        where: { id: plan.id },
+        include: DIA_INCLUDE,
+      });
+
+      return this.toStoredPlan(planActualizado as PrismaWorkoutPlanRow);
+    });
+  }
+
   private toStoredPlan(row: PrismaWorkoutPlanRow): StoredPlan {
     return {
       id: row.id,

@@ -4,6 +4,7 @@ import { PLAN_REPOSITORY, RECOVERY_REPOSITORY } from '../../persistence/tokens';
 import { PlanRepositoryPort, RecoveryRepositoryPort } from '../../persistence/ports/repositories';
 import { PlanApplicationService } from '../../application/PlanApplicationService';
 import { GeneratePlanDto, validateGeneratePlanDto } from '../dto/generate-plan.dto';
+import { SubstituteExerciseDto, validateSubstituteExerciseDto } from '../dto/substitute-exercise.dto';
 import { UsersModule, USER_APPLICATION_SERVICE } from '../users/users.module';
 import { UserApplicationService } from '../../application/UserApplicationService';
 import { withMedia } from '../../application/media';
@@ -72,6 +73,26 @@ class PlansController {
   async getHistory(@Param('userId') userId: string) {
     await this.users.assertExists(userId);
     return (await this.service.getVersionHistory(userId)).map(withMedia);
+  }
+
+  @Post('substitute-exercise')
+  async substituteExercise(
+    @Param('userId') userId: string,
+    @Body() dto: SubstituteExerciseDto,
+  ) {
+    await this.users.assertExists(userId);
+    const errores = validateSubstituteExerciseDto(dto);
+    if (errores.length > 0) {
+      throw new BadRequestException({ message: 'Datos de entrada inválidos', errores });
+    }
+    const stored = await this.service.substituteExercise(
+      userId,
+      dto.workoutDayId,
+      dto.oldExerciseId,
+      dto.newExerciseId,
+      dto.motivo,
+    );
+    return withMedia(stored);
   }
 }
 

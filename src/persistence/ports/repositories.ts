@@ -24,6 +24,17 @@ export interface PlanRepositoryPort {
   saveNewVersion(userId: string, plan: WorkoutPlanResult): Promise<StoredPlan>;
   /** Historial completo de versiones (para que la IA explique "por qué cambió tu rutina"). */
   findAllVersionsByUser(userId: string): Promise<StoredPlan[]>;
+  /**
+   * Sustituye un ejercicio en el plan activo del usuario.
+   * Devuelve el plan actualizado con la sustitución aplicada.
+   */
+  substituteExercise(
+    userId: string,
+    workoutDayId: string,
+    oldExerciseId: string,
+    newExerciseId: string,
+    motivo: string,
+  ): Promise<StoredPlan>;
 }
 
 export interface StoredExerciseSet {

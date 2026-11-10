@@ -144,6 +144,8 @@ export interface WorkoutExercisePlan {
   // mostrarlos según el nivel del usuario.
   instrucciones: string;
   erroresComunes: string[];
+  // Alternativas de sustitución (vienen del catálogo de ejercicios)
+  alternativas: string[];
   // Se agregan al responder (no se guardan): la base de las URLs es configurable.
   imagenUrl?: string | null;
   gifUrl?: string | null;
