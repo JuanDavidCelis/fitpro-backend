@@ -26,6 +26,7 @@ function planRowToResult(row) {
             motivoSustitucion: ej.motivoSustitucion,
             instrucciones: ej.exercise.instrucciones ?? '',
             erroresComunes: Array.isArray(ej.exercise.erroresComunes) ? ej.exercise.erroresComunes : [],
+            alternativas: Array.isArray(ej.exercise.alternativas) ? ej.exercise.alternativas : [],
         })),
         cardio: dia.cardioModalidad
             ? {

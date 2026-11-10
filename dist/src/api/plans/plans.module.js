@@ -18,6 +18,7 @@ const persistence_module_1 = require("../../persistence/persistence.module");
 const tokens_1 = require("../../persistence/tokens");
 const PlanApplicationService_1 = require("../../application/PlanApplicationService");
 const generate_plan_dto_1 = require("../dto/generate-plan.dto");
+const substitute_exercise_dto_1 = require("../dto/substitute-exercise.dto");
 const users_module_1 = require("../users/users.module");
 const UserApplicationService_1 = require("../../application/UserApplicationService");
 const media_1 = require("../../application/media");
@@ -75,6 +76,15 @@ let PlansController = class PlansController {
         await this.users.assertExists(userId);
         return (await this.service.getVersionHistory(userId)).map(media_1.withMedia);
     }
+    async substituteExercise(userId, dto) {
+        await this.users.assertExists(userId);
+        const errores = (0, substitute_exercise_dto_1.validateSubstituteExerciseDto)(dto);
+        if (errores.length > 0) {
+            throw new common_1.BadRequestException({ message: 'Datos de entrada inválidos', errores });
+        }
+        const stored = await this.service.substituteExercise(userId, dto.workoutDayId, dto.oldExerciseId, dto.newExerciseId, dto.motivo);
+        return (0, media_1.withMedia)(stored);
+    }
 };
 __decorate([
     (0, common_1.Post)('generate'),
@@ -98,6 +108,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], PlansController.prototype, "getHistory", null);
+__decorate([
+    (0, common_1.Post)('substitute-exercise'),
+    __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, substitute_exercise_dto_1.SubstituteExerciseDto]),
+    __metadata("design:returntype", Promise)
+], PlansController.prototype, "substituteExercise", null);
 PlansController = __decorate([
     (0, common_1.Controller)('users/:userId/workout-plans'),
     (0, common_1.UseGuards)(SupabaseAuthGuard_1.SupabaseAuthGuard, SameUserGuard_1.SameUserGuard),

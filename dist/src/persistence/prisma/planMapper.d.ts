@@ -17,6 +17,7 @@ export interface PrismaWorkoutExerciseRow {
         grupoPrimario: string;
         instrucciones?: string | null;
         erroresComunes?: unknown;
+        alternativas?: unknown;
     };
 }
 export interface PrismaWorkoutDayRow {

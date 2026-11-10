@@ -11,4 +11,5 @@ export declare class InMemoryPlanRepository implements PlanRepositoryPort {
     findActiveByUser(userId: string): Promise<StoredPlan | null>;
     saveNewVersion(userId: string, plan: WorkoutPlanResult): Promise<StoredPlan>;
     findAllVersionsByUser(userId: string): Promise<StoredPlan[]>;
+    substituteExercise(userId: string, workoutDayId: string, oldExerciseId: string, newExerciseId: string, motivo: string): Promise<StoredPlan>;
 }

@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlanApplicationService = void 0;
+const exercises_1 = require("../data/exercises");
 const health_1 = require("../domain/health");
 const generatePlan_1 = require("../engine/generatePlan");
+const common_1 = require("@nestjs/common");
 /**
  * Orquesta: construir el historial real desde los repositorios + invocar el
  * motor determinista + persistir la nueva versión. Ninguna decisión de
@@ -54,6 +56,42 @@ class PlanApplicationService {
     }
     async getVersionHistory(userId) {
         return this.planRepo.findAllVersionsByUser(userId);
+    }
+    /**
+     * Sustituye un ejercicio en el plan activo por otro del mismo grupo muscular.
+     * Valida que el nuevo ejercicio es una alternativa válida (está en la lista
+     * de alternativas del ejercicio original o comparte el mismo grupo primario).
+     */
+    async substituteExercise(userId, workoutDayId, oldExerciseId, newExerciseId, motivo) {
+        // 1. Obtener el plan activo para validar
+        const plan = await this.planRepo.findActiveByUser(userId);
+        if (!plan) {
+            throw new common_1.NotFoundException('No tienes un plan activo. Genera uno primero.');
+        }
+        // 2. Encontrar el día y el ejercicio original
+        const dia = plan.plan.dias.find((d) => d.id === workoutDayId);
+        if (!dia) {
+            throw new common_1.NotFoundException('Día de entrenamiento no encontrado en el plan activo.');
+        }
+        const ejercicioOriginal = dia.ejercicios.find((e) => e.exerciseId === oldExerciseId);
+        if (!ejercicioOriginal) {
+            throw new common_1.NotFoundException('Ejercicio no encontrado en el día especificado.');
+        }
+        // 3. Validar que el nuevo ejercicio existe
+        const nuevoEjercicio = exercises_1.EXERCISES.find((e) => e.id === newExerciseId);
+        if (!nuevoEjercicio) {
+            throw new common_1.BadRequestException('El ejercicio de sustitución no existe en el catálogo.');
+        }
+        // 4. Validar que el nuevo ejercicio es una alternativa válida
+        const ejercicioOriginalCatalogo = exercises_1.EXERCISES.find((e) => e.id === oldExerciseId);
+        const esAlternativaValida = ejercicioOriginalCatalogo?.alternativas.includes(newExerciseId) ??
+            false;
+        const mismoGrupoPrimario = ejercicioOriginalCatalogo?.grupoPrimario === nuevoEjercicio.grupoPrimario;
+        if (!esAlternativaValida && !mismoGrupoPrimario) {
+            throw new common_1.BadRequestException('El ejercicio seleccionado no es una alternativa válida para este grupo muscular.');
+        }
+        // 5. Persistir la sustitución
+        return this.planRepo.substituteExercise(userId, workoutDayId, oldExerciseId, newExerciseId, motivo);
     }
     async buildHistorialFromRepos(userId) {
         const recoveryScorePromedio = await this.recoveryRepo.averageRecentRecoveryScore(userId, 7);

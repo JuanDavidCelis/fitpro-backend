@@ -20,5 +20,11 @@ export declare class PlanApplicationService {
     generateFromSettings(userId: string, s: UserSettings): Promise<StoredPlan>;
     getActivePlan(userId: string): Promise<StoredPlan | null>;
     getVersionHistory(userId: string): Promise<StoredPlan[]>;
+    /**
+     * Sustituye un ejercicio en el plan activo por otro del mismo grupo muscular.
+     * Valida que el nuevo ejercicio es una alternativa válida (está en la lista
+     * de alternativas del ejercicio original o comparte el mismo grupo primario).
+     */
+    substituteExercise(userId: string, workoutDayId: string, oldExerciseId: string, newExerciseId: string, motivo: string): Promise<StoredPlan>;
     private buildHistorialFromRepos;
 }

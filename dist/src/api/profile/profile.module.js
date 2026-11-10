@@ -24,6 +24,7 @@ const SupabaseAuthGuard_1 = require("../../auth/SupabaseAuthGuard");
 const SameUserGuard_1 = require("../../auth/SameUserGuard");
 const plans_module_1 = require("../plans/plans.module");
 const users_module_1 = require("../users/users.module");
+const user_settings_dto_1 = require("../dto/user-settings.dto");
 const PROFILE_APPLICATION_SERVICE = Symbol('PROFILE_APPLICATION_SERVICE');
 let ProfileController = class ProfileController {
     constructor(service, users) {
@@ -58,7 +59,7 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Query)('forzar')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, String]),
+    __metadata("design:paramtypes", [String, user_settings_dto_1.UserSettingsDto, String]),
     __metadata("design:returntype", Promise)
 ], ProfileController.prototype, "put", null);
 ProfileController = __decorate([

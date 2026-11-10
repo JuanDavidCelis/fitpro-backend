@@ -3,8 +3,8 @@ export type NivelPrograma = 'foundation' | 'growth' | 'advanced' | 'olympia';
 export type ObjetivoTipo = 'perdida_grasa' | 'hipertrofia';
 export type PatronMovimiento = 'push' | 'pull' | 'squat' | 'hinge' | 'carry' | 'core' | 'cardio';
 export type AreaCorporal = 'hombro' | 'codo' | 'muneca' | 'espalda_baja' | 'cadera' | 'rodilla' | 'tobillo';
-export type GrupoMuscular = 'pecho' | 'espalda' | 'hombros' | 'biceps' | 'triceps' | 'antebrazo' | 'abdomen' | 'gluteos' | 'cuadriceps' | 'femoral' | 'pantorrilla' | 'cardio';
-export type Equipamiento = 'mancuernas' | 'barra' | 'discos' | 'rack' | 'poleas' | 'banco' | 'maquinas' | 'smith' | 'prensa' | 'bicicleta' | 'caminadora' | 'eliptica' | 'remo_ergometro' | 'peso_corporal';
+export type GrupoMuscular = 'pecho' | 'espalda' | 'hombros' | 'biceps' | 'triceps' | 'antebrazo' | 'abdomen' | 'oblicuos' | 'gluteos' | 'cuadriceps' | 'femoral' | 'pantorrilla' | 'trapecio' | 'aductores' | 'cardio';
+export type Equipamiento = 'mancuernas' | 'barra' | 'discos' | 'rack' | 'poleas' | 'banco' | 'maquinas' | 'smith' | 'prensa' | 'bicicleta' | 'caminadora' | 'eliptica' | 'remo_ergometro' | 'peso_corporal' | 'maquina_hack' | 'maquina_extension_cuadriceps' | 'cajon' | 'agarre_neutro' | 'maquina_pec_deck' | 'maquina' | 'banco_inclinado' | 'barra_recta' | 'soporte_t' | 'maquina_dominadas_asistidas' | 'cuerda' | 'agarre_individual' | 'barra_v' | 'mancuerna' | 'maquina_curl_femoral_sentado' | 'maquina_curl_femoral_acostado' | 'maquina_extension_cadera' | 'maquina_abduccion_cadera' | 'tobillera' | 'maquina_adductores' | 'maquina_aductores' | 'rueda_abdominal' | 'barra_dominadas' | 'maquina_pantorrilla_sentado' | 'escalon' | 'banco_declinado' | 'maquina_press_convergente' | 'barra_ez' | 'banco_predicador' | 'kettlebell' | 'trap_bar' | 'trineo' | 'cuerda_saltar' | 'maquina_escaladora' | 'piscina' | 'prensa_horizontal' | 'banco_extension_lumbar' | 'maquina_pendulo' | 'agarre';
 export interface Exercise {
     id: string;
     nombre: string;
@@ -74,6 +74,7 @@ export interface WorkoutExercisePlan {
     motivoSustitucion: string | null;
     instrucciones: string;
     erroresComunes: string[];
+    alternativas: string[];
     imagenUrl?: string | null;
     gifUrl?: string | null;
 }

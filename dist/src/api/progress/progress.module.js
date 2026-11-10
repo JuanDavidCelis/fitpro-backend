@@ -22,6 +22,7 @@ const auth_module_1 = require("../../auth/auth.module");
 const SupabaseAuthGuard_1 = require("../../auth/SupabaseAuthGuard");
 const SameUserGuard_1 = require("../../auth/SameUserGuard");
 const users_module_1 = require("../users/users.module");
+const add_weight_dto_1 = require("../dto/add-weight.dto");
 const PROGRESS_APPLICATION_SERVICE = Symbol('PROGRESS_APPLICATION_SERVICE');
 let ProgressController = class ProgressController {
     constructor(service, users) {
@@ -35,6 +36,10 @@ let ProgressController = class ProgressController {
     }
     async add(userId, body) {
         await this.users.assertExists(userId);
+        const errores = (0, add_weight_dto_1.validateAddWeightDto)(body);
+        if (errores.length > 0) {
+            throw new common_1.BadRequestException({ message: 'Datos de entrada inválidos', errores });
+        }
         return this.service.addWeight(userId, body);
     }
 };
@@ -50,7 +55,7 @@ __decorate([
     __param(0, (0, common_1.Param)('userId')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, add_weight_dto_1.AddWeightRequestDto]),
     __metadata("design:returntype", Promise)
 ], ProgressController.prototype, "add", null);
 ProgressController = __decorate([

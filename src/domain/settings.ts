@@ -9,10 +9,19 @@ export const SEXOS = ['masculino', 'femenino', 'otro', 'prefiero_no_decir'] as c
 export const EQUIPAMIENTOS: readonly Equipamiento[] = [
   'mancuernas', 'barra', 'discos', 'rack', 'poleas', 'banco', 'maquinas', 'smith', 'prensa',
   'bicicleta', 'caminadora', 'eliptica', 'remo_ergometro', 'peso_corporal',
+  'maquina_hack', 'maquina_extension_cuadriceps', 'cajon', 'agarre_neutro', 'maquina_pec_deck',
+  'maquina', 'banco_inclinado', 'barra_recta', 'soporte_t', 'maquina_dominadas_asistidas',
+  'cuerda', 'agarre_individual', 'barra_v', 'mancuerna', 'maquina_curl_femoral_sentado',
+  'maquina_curl_femoral_acostado', 'maquina_extension_cadera', 'maquina_abduccion_cadera',
+  'tobillera', 'maquina_adductores', 'maquina_aductores', 'rueda_abdominal', 'barra_dominadas',
+  'maquina_pantorrilla_sentado', 'escalon', 'banco_declinado', 'maquina_press_convergente',
+  'barra_ez', 'banco_predicador', 'kettlebell', 'trap_bar', 'trineo', 'cuerda_saltar',
+  'maquina_escaladora', 'piscina', 'prensa_horizontal', 'banco_extension_lumbar',
+  'maquina_pendulo', 'agarre',
 ];
 export const MUSCULOS_PRIORIZABLES: readonly GrupoMuscular[] = [
   'pecho', 'espalda', 'hombros', 'biceps', 'triceps', 'antebrazo', 'abdomen',
-  'gluteos', 'cuadriceps', 'femoral', 'pantorrilla',
+  'oblicuos', 'gluteos', 'cuadriceps', 'femoral', 'pantorrilla', 'trapecio', 'aductores',
 ];
 export const MAX_MUSCULOS_PRIORITARIOS = 2;
 

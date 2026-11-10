@@ -105,6 +105,7 @@ function buildDay(template, input, nivelPrograma, trace) {
                 motivoSustitucion: null,
                 instrucciones: exercise.instrucciones,
                 erroresComunes: exercise.erroresComunes,
+                alternativas: exercise.alternativas,
             });
         });
     }
@@ -177,6 +178,7 @@ function applyPriorityMuscles(dias, input, nivelPrograma, trace) {
             motivoSustitucion: null,
             instrucciones: extra.instrucciones,
             erroresComunes: extra.erroresComunes,
+            alternativas: extra.alternativas,
         });
         trace.push(`"${grupoPrioritario}" marcado como músculo prioritario → se añade "${extra.nombre}" extra en día "${diaConGrupo.nombre}" ` +
             '(dentro de los límites de volumen semanal seguro, validados en el paso 5).');
