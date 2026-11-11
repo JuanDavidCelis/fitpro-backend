@@ -21,7 +21,7 @@ exports.EXERCISES = [
         instrucciones: 'Escápulas retraídas, barra hasta línea del pecho, control excéntrico.',
         erroresComunes: ['Rebotar la barra en el pecho', 'Perder la retracción escapular'],
         etiquetas: ['compuesto', 'fuerza'],
-        alternativas: ['ex_press_banca_mancuernas', 'ex_press_maquina_pecho'],
+        alternativas: ['ex_press_banca_mancuernas', 'ex_press_maquina_pecho', 'ex_press_declinado_mancuernas', 'ex_press_inclinado_barra', 'ex_cruce_poleas_bajo_alto', 'ex_cruce_poleas_alto_bajo', 'ex_press_convergente_maquina', 'ex_flexiones_inclinadas'],
     },
     {
         id: 'ex_press_banca_mancuernas',
@@ -34,7 +34,7 @@ exports.EXERCISES = [
         instrucciones: 'Mayor rango de movimiento que con barra, controlar la bajada.',
         erroresComunes: ['Chocar las mancuernas arriba con excesiva velocidad'],
         etiquetas: ['compuesto'],
-        alternativas: ['ex_press_maquina_pecho', 'ex_flexiones'],
+        alternativas: ['ex_press_maquina_pecho', 'ex_flexiones', 'ex_press_declinado_mancuernas', 'ex_press_inclinado_barra', 'ex_cruce_poleas_bajo_alto', 'ex_cruce_poleas_alto_bajo', 'ex_press_convergente_maquina', 'ex_flexiones_inclinadas'],
     },
     {
         id: 'ex_press_maquina_pecho',
@@ -47,7 +47,7 @@ exports.EXERCISES = [
         instrucciones: 'Ajustar asiento a la altura del pecho, evitar bloquear codos con fuerza.',
         erroresComunes: ['Rango de movimiento incompleto'],
         etiquetas: ['maquina', 'principiante_friendly'],
-        alternativas: ['ex_flexiones'],
+        alternativas: ['ex_flexiones', 'ex_press_convergente_maquina', 'ex_press_declinado_mancuernas', 'ex_press_inclinado_barra'],
     },
     {
         id: 'ex_flexiones',
@@ -60,7 +60,7 @@ exports.EXERCISES = [
         instrucciones: 'Cuerpo alineado, bajar hasta casi tocar el suelo con el pecho.',
         erroresComunes: ['Cadera caída', 'Rango parcial'],
         etiquetas: ['peso_corporal', 'sin_equipo'],
-        alternativas: ['ex_press_banca_mancuernas'],
+        alternativas: ['ex_press_banca_mancuernas', 'ex_flexiones_inclinadas', 'ex_press_convergente_maquina'],
     },
     {
         id: 'ex_press_inclinado_mancuernas',
@@ -73,7 +73,7 @@ exports.EXERCISES = [
         instrucciones: 'Banco a 30-45°, enfoca la parte alta del pecho.',
         erroresComunes: ['Inclinación excesiva que traslada el trabajo a hombro'],
         etiquetas: ['compuesto'],
-        alternativas: ['ex_press_maquina_pecho'],
+        alternativas: ['ex_press_maquina_pecho', 'ex_press_inclinado_barra', 'ex_cruce_poleas_bajo_alto', 'ex_press_convergente_maquina'],
     },
     {
         id: 'ex_aperturas_polea',
@@ -86,7 +86,7 @@ exports.EXERCISES = [
         instrucciones: 'Movimiento de abrazo, mantener ligera flexión de codo constante.',
         erroresComunes: ['Convertirlo en press por exceso de flexión de codo'],
         etiquetas: ['aislamiento'],
-        alternativas: ['ex_aperturas_mancuernas'],
+        alternativas: ['ex_aperturas_mancuernas', 'ex_cruce_poleas_bajo_alto', 'ex_cruce_poleas_alto_bajo'],
     },
     {
         id: 'ex_aperturas_mancuernas',
@@ -99,7 +99,7 @@ exports.EXERCISES = [
         instrucciones: 'Bajar con codos ligeramente flexionados, evitar rango excesivo.',
         erroresComunes: ['Sobreextender el hombro'],
         etiquetas: ['aislamiento'],
-        alternativas: ['ex_aperturas_polea'],
+        alternativas: ['ex_aperturas_polea', 'ex_cruce_poleas_bajo_alto', 'ex_cruce_poleas_alto_bajo'],
     },
     // ---------------------- ESPALDA ----------------------
     {
@@ -113,7 +113,7 @@ exports.EXERCISES = [
         instrucciones: 'Escápulas deprimidas antes de tirar, barbilla sobre la barra.',
         erroresComunes: ['Balanceo excesivo', 'Rango parcial'],
         etiquetas: ['compuesto'],
-        alternativas: ['ex_jalon_pecho', 'ex_remo_maquina'],
+        alternativas: ['ex_jalon_pecho', 'ex_remo_maquina', 'ex_jalon_neutro', 'ex_dominada_asistida', 'ex_dominada_supina'],
     },
     {
         id: 'ex_jalon_pecho',
@@ -126,7 +126,7 @@ exports.EXERCISES = [
         instrucciones: 'Tirar con los codos hacia abajo y atrás, evitar usar solo brazos.',
         erroresComunes: ['Inclinarse demasiado hacia atrás'],
         etiquetas: ['principiante_friendly'],
-        alternativas: ['ex_remo_maquina'],
+        alternativas: ['ex_remo_maquina', 'ex_jalon_neutro', 'ex_pullover_polea', 'ex_jalon_brazos_rectos', 'ex_dominada_asistida'],
     },
     {
         id: 'ex_remo_barra',
@@ -139,7 +139,7 @@ exports.EXERCISES = [
         instrucciones: 'Espalda neutra, tirar hacia el abdomen, controlar el descenso.',
         erroresComunes: ['Redondear la zona lumbar'],
         etiquetas: ['compuesto'],
-        alternativas: ['ex_remo_mancuerna', 'ex_remo_maquina'],
+        alternativas: ['ex_remo_mancuerna', 'ex_remo_maquina', 'ex_remo_polea_sentado', 'ex_remo_pecho_apoyado', 'ex_remo_t_barra', 'ex_remo_unilateral_polea'],
     },
     {
         id: 'ex_remo_mancuerna',
@@ -152,7 +152,7 @@ exports.EXERCISES = [
         instrucciones: 'Apoyo en banco, tirar llevando el codo hacia atrás.',
         erroresComunes: ['Rotar el tronco para ayudarse'],
         etiquetas: ['compuesto'],
-        alternativas: ['ex_remo_maquina'],
+        alternativas: ['ex_remo_maquina', 'ex_remo_polea_sentado', 'ex_remo_pecho_apoyado', 'ex_remo_t_barra', 'ex_remo_unilateral_polea'],
     },
     {
         id: 'ex_remo_maquina',
@@ -165,7 +165,7 @@ exports.EXERCISES = [
         instrucciones: 'Pecho apoyado, tirar sin usar impulso.',
         erroresComunes: ['Usar impulso del tronco'],
         etiquetas: ['maquina', 'principiante_friendly'],
-        alternativas: ['ex_jalon_pecho'],
+        alternativas: ['ex_jalon_pecho', 'ex_remo_polea_sentado', 'ex_remo_pecho_apoyado', 'ex_remo_t_barra'],
     },
     {
         id: 'ex_remo_invertido',
@@ -178,7 +178,7 @@ exports.EXERCISES = [
         instrucciones: 'Cuerpo recto, tirar el pecho hacia la barra fija.',
         erroresComunes: ['Cadera caída'],
         etiquetas: ['sin_equipo'],
-        alternativas: ['ex_remo_maquina'],
+        alternativas: ['ex_remo_maquina', 'ex_remo_pecho_apoyado', 'ex_remo_unilateral_polea'],
     },
     // ---------------------- HOMBROS ----------------------
     {
@@ -192,7 +192,7 @@ exports.EXERCISES = [
         instrucciones: 'Core apretado, evitar arquear excesivamente la lumbar.',
         erroresComunes: ['Hiperextensión lumbar'],
         etiquetas: ['compuesto'],
-        alternativas: ['ex_press_hombro_mancuernas'],
+        alternativas: ['ex_press_hombro_mancuernas', 'ex_face_pull', 'ex_pajaros_mancuernas', 'ex_reverse_pec_deck', 'ex_elevacion_lateral_unilateral_polea', 'ex_y_raise', 'ex_rotacion_externa_polea'],
     },
     {
         id: 'ex_press_hombro_mancuernas',
@@ -205,7 +205,7 @@ exports.EXERCISES = [
         instrucciones: 'Sentado o de pie, empujar sin bloquear codos con fuerza.',
         erroresComunes: ['Arquear la espalda para compensar'],
         etiquetas: ['compuesto'],
-        alternativas: ['ex_press_maquina_hombro'],
+        alternativas: ['ex_press_maquina_hombro', 'ex_face_pull', 'ex_pajaros_mancuernas', 'ex_reverse_pec_deck', 'ex_elevacion_lateral_unilateral_polea', 'ex_y_raise'],
     },
     {
         id: 'ex_press_maquina_hombro',
@@ -218,7 +218,7 @@ exports.EXERCISES = [
         instrucciones: 'Espalda apoyada, rango completo sin bloquear codos.',
         erroresComunes: ['Rango parcial'],
         etiquetas: ['principiante_friendly'],
-        alternativas: ['ex_press_hombro_mancuernas'],
+        alternativas: ['ex_press_hombro_mancuernas', 'ex_face_pull', 'ex_pajaros_mancuernas', 'ex_reverse_pec_deck'],
     },
     {
         id: 'ex_elevaciones_laterales',
@@ -231,7 +231,7 @@ exports.EXERCISES = [
         instrucciones: 'Elevar hasta la altura del hombro, ligera flexión de codo.',
         erroresComunes: ['Usar impulso del tronco', 'Subir por encima del hombro'],
         etiquetas: ['aislamiento'],
-        alternativas: ['ex_elevaciones_laterales_polea'],
+        alternativas: ['ex_elevaciones_laterales_polea', 'ex_elevacion_lateral_unilateral_polea', 'ex_face_pull', 'ex_pajaros_mancuernas', 'ex_reverse_pec_deck'],
     },
     {
         id: 'ex_elevaciones_laterales_polea',
@@ -244,7 +244,7 @@ exports.EXERCISES = [
         instrucciones: 'Tensión constante durante todo el recorrido.',
         erroresComunes: ['Balanceo del cuerpo'],
         etiquetas: ['aislamiento'],
-        alternativas: ['ex_elevaciones_laterales'],
+        alternativas: ['ex_elevaciones_laterales', 'ex_elevacion_lateral_unilateral_polea', 'ex_face_pull', 'ex_pajaros_mancuernas', 'ex_reverse_pec_deck'],
     },
     {
         id: 'ex_pike_pushup',
@@ -257,7 +257,7 @@ exports.EXERCISES = [
         instrucciones: 'Cadera elevada formando una V invertida, bajar la cabeza hacia el suelo flexionando los hombros.',
         erroresComunes: ['Flexionar los codos hacia afuera', 'Perder la posición de cadera alta'],
         etiquetas: ['sin_equipo', 'principiante_friendly'],
-        alternativas: ['ex_press_hombro_mancuernas', 'ex_press_maquina_hombro'],
+        alternativas: ['ex_press_hombro_mancuernas', 'ex_press_maquina_hombro', 'ex_face_pull', 'ex_pajaros_mancuernas'],
     },
     {
         id: 'ex_plancha_a_pike',
@@ -270,7 +270,7 @@ exports.EXERCISES = [
         instrucciones: 'Desde plancha, elevar la cadera hacia arriba y volver, manteniendo brazos firmes.',
         erroresComunes: ['Flexionar las rodillas para compensar'],
         etiquetas: ['sin_equipo'],
-        alternativas: ['ex_pike_pushup'],
+        alternativas: ['ex_pike_pushup', 'ex_face_pull', 'ex_pajaros_mancuernas'],
     },
     // ---------------------- BÍCEPS ----------------------
     {
@@ -284,7 +284,7 @@ exports.EXERCISES = [
         instrucciones: 'Codos fijos junto al torso, evitar balanceo.',
         erroresComunes: ['Balancear el cuerpo para levantar más peso'],
         etiquetas: ['aislamiento'],
-        alternativas: ['ex_curl_mancuerna', 'ex_curl_polea'],
+        alternativas: ['ex_curl_mancuerna', 'ex_curl_polea', 'ex_curl_predicador', 'ex_curl_inclinado_mancuernas', 'ex_curl_bayesian', 'ex_curl_concentrado', 'ex_curl_barra_ez'],
     },
     {
         id: 'ex_curl_mancuerna',
@@ -297,7 +297,7 @@ exports.EXERCISES = [
         instrucciones: 'Puede alternarse o simultáneo, controlar la fase excéntrica.',
         erroresComunes: ['Balanceo'],
         etiquetas: ['aislamiento'],
-        alternativas: ['ex_curl_polea'],
+        alternativas: ['ex_curl_polea', 'ex_curl_predicador', 'ex_curl_inclinado_mancuernas', 'ex_curl_bayesian', 'ex_curl_concentrado', 'ex_curl_barra_ez'],
     },
     {
         id: 'ex_curl_polea',
@@ -310,7 +310,7 @@ exports.EXERCISES = [
         instrucciones: 'Tensión constante, evitar mover los codos hacia atrás.',
         erroresComunes: ['Mover los codos hacia atrás para ayudarse'],
         etiquetas: ['aislamiento'],
-        alternativas: ['ex_curl_mancuerna'],
+        alternativas: ['ex_curl_mancuerna', 'ex_curl_predicador', 'ex_curl_inclinado_mancuernas', 'ex_curl_bayesian', 'ex_curl_concentrado', 'ex_curl_barra_ez'],
     },
     {
         id: 'ex_curl_martillo',
@@ -323,7 +323,7 @@ exports.EXERCISES = [
         instrucciones: 'Agarre neutro, útil también para antebrazo.',
         erroresComunes: ['Balanceo'],
         etiquetas: ['aislamiento'],
-        alternativas: ['ex_curl_mancuerna'],
+        alternativas: ['ex_curl_mancuerna', 'ex_curl_predicador', 'ex_curl_inclinado_mancuernas', 'ex_curl_bayesian', 'ex_curl_concentrado', 'ex_curl_barra_ez'],
     },
     // ---------------------- TRÍCEPS ----------------------
     {
@@ -337,7 +337,7 @@ exports.EXERCISES = [
         instrucciones: 'Codos apuntando al techo, bajar controlado hacia la frente.',
         erroresComunes: ['Abrir los codos'],
         etiquetas: ['aislamiento'],
-        alternativas: ['ex_extension_triceps_polea'],
+        alternativas: ['ex_extension_triceps_polea', 'ex_extension_triceps_overhead_polea', 'ex_extension_triceps_unilateral', 'ex_extension_triceps_mancuerna_overhead', 'ex_press_banca_agarre_cerrado', 'ex_patada_triceps_mancuerna', 'ex_extension_triceps_barra_v'],
     },
     {
         id: 'ex_extension_triceps_polea',
@@ -350,7 +350,7 @@ exports.EXERCISES = [
         instrucciones: 'Codos pegados al torso, extender completamente.',
         erroresComunes: ['Separar los codos del torso'],
         etiquetas: ['aislamiento', 'principiante_friendly'],
-        alternativas: ['ex_fondos_banco'],
+        alternativas: ['ex_fondos_banco', 'ex_extension_triceps_overhead_polea', 'ex_extension_triceps_unilateral', 'ex_extension_triceps_mancuerna_overhead', 'ex_press_banca_agarre_cerrado', 'ex_patada_triceps_mancuerna', 'ex_extension_triceps_barra_v'],
     },
     {
         id: 'ex_fondos_banco',
@@ -363,7 +363,7 @@ exports.EXERCISES = [
         instrucciones: 'Bajar controlado, evitar rango excesivo que estrese el hombro.',
         erroresComunes: ['Bajar demasiado y forzar el hombro'],
         etiquetas: ['sin_equipo'],
-        alternativas: ['ex_extension_triceps_polea'],
+        alternativas: ['ex_extension_triceps_polea', 'ex_extension_triceps_overhead_polea', 'ex_extension_triceps_unilateral', 'ex_extension_triceps_mancuerna_overhead', 'ex_press_banca_agarre_cerrado', 'ex_patada_triceps_mancuerna', 'ex_extension_triceps_barra_v'],
     },
     // ---------------------- ANTEBRAZO (sección 8) ----------------------
     {
@@ -443,7 +443,7 @@ exports.EXERCISES = [
         instrucciones: 'Cuerpo alineado, evitar que la cadera suba o baje.',
         erroresComunes: ['Cadera elevada o caída'],
         etiquetas: ['sin_equipo', 'core'],
-        alternativas: ['ex_crunch_polea'],
+        alternativas: ['ex_crunch_polea', 'ex_crunch_inverso', 'ex_ab_wheel', 'ex_pallof_press', 'ex_dead_bug', 'ex_bird_dog', 'ex_elevacion_rodillas_colgado', 'ex_hollow_body_hold'],
     },
     {
         id: 'ex_crunch_polea',
@@ -456,7 +456,7 @@ exports.EXERCISES = [
         instrucciones: 'Flexionar el tronco usando el abdomen, no los brazos.',
         erroresComunes: ['Tirar con los brazos'],
         etiquetas: ['core'],
-        alternativas: ['ex_plancha'],
+        alternativas: ['ex_plancha', 'ex_crunch_inverso', 'ex_ab_wheel', 'ex_pallof_press', 'ex_dead_bug', 'ex_bird_dog', 'ex_elevacion_rodillas_colgado', 'ex_hollow_body_hold'],
     },
     {
         id: 'ex_elevacion_piernas',
@@ -469,7 +469,7 @@ exports.EXERCISES = [
         instrucciones: 'Evitar balanceo, controlar la bajada.',
         erroresComunes: ['Usar impulso'],
         etiquetas: ['sin_equipo', 'core'],
-        alternativas: ['ex_plancha'],
+        alternativas: ['ex_plancha', 'ex_crunch_inverso', 'ex_ab_wheel', 'ex_pallof_press', 'ex_dead_bug', 'ex_bird_dog', 'ex_elevacion_rodillas_colgado', 'ex_hollow_body_hold'],
     },
     // ---------------------- CUÁDRICEPS / PIERNA ----------------------
     {
@@ -483,7 +483,7 @@ exports.EXERCISES = [
         instrucciones: 'Rodillas en línea con los pies, profundidad según movilidad.',
         erroresComunes: ['Rodillas colapsando hacia adentro', 'Levantar talones'],
         etiquetas: ['compuesto', 'fuerza'],
-        alternativas: ['ex_sentadilla_goblet', 'ex_prensa'],
+        alternativas: ['ex_sentadilla_goblet', 'ex_prensa', 'ex_sentadilla_bulgara', 'ex_sentadilla_hack', 'ex_sentadilla_frontal', 'ex_sentadilla_sumo', 'ex_sentadilla_pendulo'],
     },
     {
         id: 'ex_sentadilla_goblet',
@@ -496,7 +496,7 @@ exports.EXERCISES = [
         instrucciones: 'Mancuerna pegada al pecho, torso lo más vertical posible.',
         erroresComunes: ['Inclinar demasiado el torso'],
         etiquetas: ['principiante_friendly'],
-        alternativas: ['ex_prensa', 'ex_sentadilla_peso_corporal'],
+        alternativas: ['ex_prensa', 'ex_sentadilla_peso_corporal', 'ex_sentadilla_bulgara', 'ex_step_up_mancuernas', 'ex_zancada_inversa', 'ex_sentadilla_sumo', 'ex_sentadilla_kettlebell'],
     },
     {
         id: 'ex_sentadilla_peso_corporal',
@@ -509,7 +509,7 @@ exports.EXERCISES = [
         instrucciones: 'Rango completo, talones apoyados en todo momento.',
         erroresComunes: ['Levantar los talones'],
         etiquetas: ['sin_equipo'],
-        alternativas: ['ex_sentadilla_goblet'],
+        alternativas: ['ex_sentadilla_goblet', 'ex_zancada_inversa', 'ex_step_up_mancuernas'],
     },
     {
         id: 'ex_prensa',
@@ -522,7 +522,7 @@ exports.EXERCISES = [
         instrucciones: 'No bloquear rodillas por completo arriba, rango controlado.',
         erroresComunes: ['Bloquear rodillas con fuerza'],
         etiquetas: ['maquina', 'principiante_friendly'],
-        alternativas: ['ex_sentadilla_goblet'],
+        alternativas: ['ex_sentadilla_goblet', 'ex_sentadilla_hack', 'ex_prensa_unilateral', 'ex_extension_cuadriceps', 'ex_extension_cuadriceps_unilateral', 'ex_press_piernas_horizontal'],
     },
     {
         id: 'ex_zancadas',
@@ -535,7 +535,7 @@ exports.EXERCISES = [
         instrucciones: 'Paso controlado, rodilla trasera cerca del suelo sin golpear.',
         erroresComunes: ['Rodilla delantera sobrepasando mucho la punta del pie'],
         etiquetas: ['unilateral'],
-        alternativas: ['ex_prensa'],
+        alternativas: ['ex_prensa', 'ex_zancada_inversa', 'ex_sentadilla_bulgara', 'ex_step_up_mancuernas'],
     },
     // ---------------------- FEMORAL / GLÚTEOS ----------------------
     {
@@ -549,7 +549,7 @@ exports.EXERCISES = [
         instrucciones: 'Bisagra de cadera, espalda neutra, barra pegada a las piernas.',
         erroresComunes: ['Redondear la espalda baja'],
         etiquetas: ['compuesto'],
-        alternativas: ['ex_peso_muerto_mancuernas', 'ex_curl_femoral_maquina'],
+        alternativas: ['ex_peso_muerto_mancuernas', 'ex_curl_femoral_maquina', 'ex_curl_femoral_sentado', 'ex_curl_femoral_acostado', 'ex_buenos_dias_barra'],
     },
     {
         id: 'ex_peso_muerto_mancuernas',
@@ -562,7 +562,7 @@ exports.EXERCISES = [
         instrucciones: 'Igual patrón que con barra, mayor accesibilidad.',
         erroresComunes: ['Redondear la espalda baja'],
         etiquetas: ['compuesto', 'principiante_friendly'],
-        alternativas: ['ex_curl_femoral_maquina'],
+        alternativas: ['ex_curl_femoral_maquina', 'ex_curl_femoral_sentado', 'ex_curl_femoral_acostado', 'ex_buenos_dias_barra'],
     },
     {
         id: 'ex_curl_femoral_maquina',
@@ -575,7 +575,7 @@ exports.EXERCISES = [
         instrucciones: 'Rango completo, controlar la fase excéntrica.',
         erroresComunes: ['Usar impulso de cadera'],
         etiquetas: ['maquina', 'principiante_friendly'],
-        alternativas: ['ex_peso_muerto_mancuernas'],
+        alternativas: ['ex_peso_muerto_mancuernas', 'ex_curl_femoral_sentado', 'ex_curl_femoral_acostado'],
     },
     {
         id: 'ex_peso_muerto_pierna_unica',
@@ -627,7 +627,7 @@ exports.EXERCISES = [
         instrucciones: 'Empujar con talones, extensión completa de cadera sin hiperextender lumbar.',
         erroresComunes: ['Hiperextender la zona lumbar arriba'],
         etiquetas: ['compuesto'],
-        alternativas: ['ex_puente_gluteo'],
+        alternativas: ['ex_puente_gluteo', 'ex_hip_thrust_unilateral', 'ex_pull_through_polea', 'ex_extension_cadera_maquina', 'ex_abduccion_cadera_maquina', 'ex_patada_gluteo_polea', 'ex_abduccion_cadera_polea', 'ex_swing_kettlebell'],
     },
     {
         id: 'ex_puente_gluteo',
@@ -640,7 +640,7 @@ exports.EXERCISES = [
         instrucciones: 'Apretar glúteo arriba, evitar arquear en exceso la lumbar.',
         erroresComunes: ['Arco lumbar excesivo'],
         etiquetas: ['sin_equipo'],
-        alternativas: ['ex_hip_thrust'],
+        alternativas: ['ex_hip_thrust', 'ex_hip_thrust_unilateral', 'ex_pull_through_polea', 'ex_extension_cadera_maquina', 'ex_abduccion_cadera_maquina', 'ex_patada_gluteo_polea', 'ex_abduccion_cadera_polea'],
     },
     // ---------------------- PANTORRILLA ----------------------
     {
@@ -654,7 +654,7 @@ exports.EXERCISES = [
         instrucciones: 'Rango completo, pausa arriba.',
         erroresComunes: ['Rango parcial y rápido'],
         etiquetas: ['aislamiento'],
-        alternativas: ['ex_elevacion_talones_peso_corporal'],
+        alternativas: ['ex_elevacion_talones_peso_corporal', 'ex_elevacion_talones_sentado', 'ex_elevacion_talones_prensa', 'ex_elevacion_talones_unilateral'],
     },
     {
         id: 'ex_elevacion_talones_peso_corporal',
@@ -667,7 +667,7 @@ exports.EXERCISES = [
         instrucciones: 'En un escalón para mayor rango si es posible.',
         erroresComunes: ['Rango parcial'],
         etiquetas: ['sin_equipo'],
-        alternativas: ['ex_elevacion_talones_pie'],
+        alternativas: ['ex_elevacion_talones_pie', 'ex_elevacion_talones_sentado', 'ex_elevacion_talones_prensa', 'ex_elevacion_talones_unilateral'],
     },
     // ---------------------- CARDIO ----------------------
     {
@@ -681,7 +681,7 @@ exports.EXERCISES = [
         instrucciones: 'Ritmo sostenido y conversacional.',
         erroresComunes: [],
         etiquetas: ['cardio', 'bajo_impacto', 'sin_equipo'],
-        alternativas: ['ex_caminata_inclinada'],
+        alternativas: ['ex_caminata_inclinada', 'ex_burpee', 'ex_cuerda_saltar', 'ex_escaladora', 'ex_natacion', 'ex_ciclismo_exterior'],
     },
     {
         id: 'ex_caminata_inclinada',
@@ -694,7 +694,7 @@ exports.EXERCISES = [
         instrucciones: 'Inclinación moderada, ritmo sostenido.',
         erroresComunes: [],
         etiquetas: ['cardio', 'bajo_impacto'],
-        alternativas: ['ex_caminata'],
+        alternativas: ['ex_caminata', 'ex_burpee', 'ex_cuerda_saltar', 'ex_escaladora', 'ex_natacion', 'ex_ciclismo_exterior'],
     },
     {
         id: 'ex_bicicleta',
