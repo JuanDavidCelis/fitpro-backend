@@ -18,7 +18,7 @@ export class ProfileApplicationService {
 
   async getProfile(userId: string): Promise<UserSettings> {
     const p = await this.profileRepo.findByUser(userId);
-    if (!p) throw new NotFoundException('Aún no has completado tu perfil.');
+    if (!p) throw new NotFoundException({ message: 'Aún no has completado tu perfil.', code: 'PROFILE_NOT_FOUND' });
     return p;
   }
 

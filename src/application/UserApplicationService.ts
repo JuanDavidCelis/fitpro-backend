@@ -36,7 +36,7 @@ export class UserApplicationService {
   async getById(id: string): Promise<StoredUser> {
     const user = await this.userRepo.findById(id);
     if (!user) {
-      throw new NotFoundException(`Usuario ${id} no existe`);
+      throw new NotFoundException({ message: `Usuario ${id} no existe`, code: 'USER_NOT_FOUND' });
     }
     return user;
   }
@@ -48,7 +48,7 @@ export class UserApplicationService {
   async assertExists(id: string): Promise<void> {
     const existe = await this.userRepo.existsById(id);
     if (!existe) {
-      throw new NotFoundException(`Usuario ${id} no existe. Completa tu registro primero (POST /users).`);
+      throw new NotFoundException({ message: `Usuario ${id} no existe. Completa tu registro primero (POST /users).`, code: 'USER_NOT_FOUND' });
     }
   }
 

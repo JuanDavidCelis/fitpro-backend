@@ -65,7 +65,7 @@ class PlansController {
     if (!plan) {
       // 404 explícito (en vez de un 200 con cuerpo vacío): el cliente móvil
       // distingue así "aún no tienes plan" de un error real.
-      throw new NotFoundException('No tienes un plan activo. Genera uno primero.');
+      throw new NotFoundException({ message: 'No tienes un plan activo. Genera uno primero.', code: 'NO_ACTIVE_PLAN' });
     }
     return withMedia(plan);
   }

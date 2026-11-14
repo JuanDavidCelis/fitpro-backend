@@ -31,7 +31,7 @@ class UserApplicationService {
     async getById(id) {
         const user = await this.userRepo.findById(id);
         if (!user) {
-            throw new common_1.NotFoundException(`Usuario ${id} no existe`);
+            throw new common_1.NotFoundException({ message: `Usuario ${id} no existe`, code: 'USER_NOT_FOUND' });
         }
         return user;
     }
@@ -42,7 +42,7 @@ class UserApplicationService {
     async assertExists(id) {
         const existe = await this.userRepo.existsById(id);
         if (!existe) {
-            throw new common_1.NotFoundException(`Usuario ${id} no existe. Completa tu registro primero (POST /users).`);
+            throw new common_1.NotFoundException({ message: `Usuario ${id} no existe. Completa tu registro primero (POST /users).`, code: 'USER_NOT_FOUND' });
         }
     }
     normalizarNombre(nombre, email) {
