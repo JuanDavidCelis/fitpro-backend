@@ -15,12 +15,14 @@ const PrismaRecoveryRepository_1 = require("./prisma/PrismaRecoveryRepository");
 const PrismaUserRepository_1 = require("./prisma/PrismaUserRepository");
 const PrismaProfileRepository_1 = require("./prisma/PrismaProfileRepository");
 const PrismaProgressRepository_1 = require("./prisma/PrismaProgressRepository");
+const PrismaExerciseRepository_1 = require("./prisma/PrismaExerciseRepository");
 const InMemoryPlanRepository_1 = require("./memory/InMemoryPlanRepository");
 const InMemorySessionRepository_1 = require("./memory/InMemorySessionRepository");
 const InMemoryRecoveryRepository_1 = require("./memory/InMemoryRecoveryRepository");
 const InMemoryUserRepository_1 = require("./memory/InMemoryUserRepository");
 const InMemoryProfileRepository_1 = require("./memory/InMemoryProfileRepository");
 const InMemoryProgressRepository_1 = require("./memory/InMemoryProgressRepository");
+const InMemoryExerciseRepository_1 = require("./memory/InMemoryExerciseRepository");
 const tokens_1 = require("./tokens");
 // Controlado por variable de entorno para poder correr el backend en modo
 // demo/desarrollo sin PostgreSQL (USE_IN_MEMORY_DB=true), y en modo real
@@ -60,10 +62,14 @@ exports.PersistenceModule = PersistenceModule = __decorate([
                 useClass: useInMemory ? InMemoryProgressRepository_1.InMemoryProgressRepository : PrismaProgressRepository_1.PrismaProgressRepository,
             },
             {
+                provide: tokens_1.EXERCISE_REPOSITORY,
+                useClass: useInMemory ? InMemoryExerciseRepository_1.InMemoryExerciseRepository : PrismaExerciseRepository_1.PrismaExerciseRepository,
+            },
+            {
                 provide: tokens_1.USER_REPOSITORY,
                 useClass: useInMemory ? InMemoryUserRepository_1.InMemoryUserRepository : PrismaUserRepository_1.PrismaUserRepository,
             },
         ],
-        exports: [tokens_1.PLAN_REPOSITORY, tokens_1.SESSION_REPOSITORY, tokens_1.RECOVERY_REPOSITORY, tokens_1.USER_REPOSITORY, tokens_1.PROFILE_REPOSITORY, tokens_1.PROGRESS_REPOSITORY],
+        exports: [tokens_1.PLAN_REPOSITORY, tokens_1.SESSION_REPOSITORY, tokens_1.RECOVERY_REPOSITORY, tokens_1.USER_REPOSITORY, tokens_1.PROFILE_REPOSITORY, tokens_1.PROGRESS_REPOSITORY, tokens_1.EXERCISE_REPOSITORY],
     })
 ], PersistenceModule);

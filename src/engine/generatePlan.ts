@@ -1,5 +1,6 @@
 import {
   EngineInput,
+  Exercise,
   GrupoMuscular,
   WorkoutDayPlan,
   WorkoutExercisePlan,
@@ -8,6 +9,7 @@ import {
 import { selectProgramLevel } from './levelSelection';
 import { selectSplit, DayTemplate } from './splitSelection';
 import { resolveExercise, candidatesForGroup } from './exerciseSelection';
+import { EXERCISES as DEFAULT_EXERCISES } from '../data/exercises';
 import { computeSetsReps } from './setsRepsParams';
 import { selectCardio } from './cardioSelection';
 import { validatePlanSafety } from './safetyValidation';
@@ -21,7 +23,7 @@ import { validatePlanSafety } from './safetyValidation';
  *   4. Parámetros de series/reps/descanso
  *   5. Validación de seguridad
  */
-export function generateWorkoutPlan(input: EngineInput): WorkoutPlanResult {
+export function generateWorkoutPlan(input: EngineInput, catalog: Exercise[] = DEFAULT_EXERCISES): WorkoutPlanResult {
   const trace: string[] = [];
   const warnings = [];
 
@@ -59,13 +61,13 @@ export function generateWorkoutPlan(input: EngineInput): WorkoutPlanResult {
   // disponible es reducido, p. ej. sin equipamiento); lo que se evita es
   // repetir un ejercicio DENTRO del mismo día.
   const dias: WorkoutDayPlan[] = splitResult.dias.map((template) =>
-    buildDay(template, input, nivelPrograma, trace),
+    buildDay(template, input, nivelPrograma, trace, catalog),
   );
 
   // Aplicar músculos prioritarios (sección 8): +1 ejercicio extra si el grupo
   // prioritario aparece en el split. Aquí sí se busca variedad frente a lo ya
   // usado en ESE día concreto.
-  applyPriorityMuscles(dias, input, nivelPrograma, trace);
+  applyPriorityMuscles(dias, input, nivelPrograma, trace, catalog);
 
   // Paso 5
   const validation = validatePlanSafety(dias, nivelPrograma);
@@ -86,6 +88,7 @@ function buildDay(
   input: EngineInput,
   nivelPrograma: WorkoutPlanResult['nivelPrograma'],
   trace: string[],
+  catalog: Exercise[],
 ): WorkoutDayPlan {
   const ejercicios: WorkoutExercisePlan[] = [];
   const usadosEnDia = new Set<string>();
@@ -97,7 +100,7 @@ function buildDay(
   const maxEjerciciosPorGrupo = gruposDelDia.length <= 2 ? 3 : 2;
 
   for (const grupo of gruposDelDia) {
-    const candidatos = candidatesForGroup(grupo, input, nivelPrograma).filter(
+    const candidatos = candidatesForGroup(grupo, input, nivelPrograma, catalog).filter(
       (c) => !usadosEnDia.has(c.id),
     );
     if (candidatos.length === 0) {
@@ -197,13 +200,14 @@ function applyPriorityMuscles(
   input: EngineInput,
   nivelPrograma: WorkoutPlanResult['nivelPrograma'],
   trace: string[],
+  catalog: Exercise[],
 ): void {
   for (const grupoPrioritario of input.preferencias.musculosPrioritarios.slice(0, 2)) {
     const diaConGrupo = dias.find((d) => d.gruposMusculares.includes(grupoPrioritario));
     if (!diaConGrupo) continue;
 
     const idsYaEnEseDia = new Set(diaConGrupo.ejercicios.map((e) => e.exerciseId));
-    const candidatos = candidatesForGroup(grupoPrioritario, input, nivelPrograma).filter(
+    const candidatos = candidatesForGroup(grupoPrioritario, input, nivelPrograma, catalog).filter(
       (c) => !idsYaEnEseDia.has(c.id),
     );
     if (candidatos.length === 0) continue;

@@ -28,13 +28,14 @@ function isEligible(exercise, equipamientoDisponible, nivelPrograma, limitacione
  * (sección 21: mantener patrón de movimiento y grupo muscular en lo posible).
  * Devuelve null si ninguna alternativa es viable (se descarta ese slot).
  */
-function resolveExercise(idealExerciseId, input, nivelPrograma, yaUsados) {
+function resolveExercise(idealExerciseId, input, nivelPrograma, yaUsados, catalog = exercises_1.EXERCISES) {
     const equipamientoDisponible = new Set([
         ...input.equipamientoDisponible,
         'peso_corporal', // siempre disponible
     ]);
     const excluidosPreferencia = new Set(input.preferencias.ejerciciosExcluidosIds);
-    const ideal = (0, exercises_1.findExercise)(idealExerciseId);
+    const byId = new Map(catalog.map((e) => [e.id, e]));
+    const ideal = byId.get(idealExerciseId);
     if (!ideal)
         return null;
     const candidatos = [ideal.id, ...ideal.alternativas];
@@ -43,7 +44,7 @@ function resolveExercise(idealExerciseId, input, nivelPrograma, yaUsados) {
             continue;
         if (excluidosPreferencia.has(candidatoId))
             continue;
-        const candidato = (0, exercises_1.findExercise)(candidatoId);
+        const candidato = byId.get(candidatoId);
         if (!candidato)
             continue;
         if (isEligible(candidato, equipamientoDisponible, nivelPrograma, input.limitaciones)) {
@@ -63,13 +64,13 @@ function resolveExercise(idealExerciseId, input, nivelPrograma, yaUsados) {
  * Selecciona todos los ejercicios elegibles para un grupo muscular dado,
  * ordenados sin repetir, respetando equipamiento/nivel/limitaciones.
  */
-function candidatesForGroup(grupo, input, nivelPrograma) {
+function candidatesForGroup(grupo, input, nivelPrograma, catalog = exercises_1.EXERCISES) {
     const equipamientoDisponible = new Set([
         ...input.equipamientoDisponible,
         'peso_corporal',
     ]);
     const excluidosPreferencia = new Set(input.preferencias.ejerciciosExcluidosIds);
-    return exercises_1.EXERCISES.filter((ex) => ex.grupoPrimario === grupo &&
+    return catalog.filter((ex) => ex.grupoPrimario === grupo &&
         !excluidosPreferencia.has(ex.id) &&
         isEligible(ex, equipamientoDisponible, nivelPrograma, input.limitaciones));
 }

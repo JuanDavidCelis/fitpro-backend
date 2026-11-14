@@ -13,16 +13,32 @@ const common_1 = require("@nestjs/common");
  * del pipeline de IA (sección 27 del documento de diseño).
  */
 class PlanApplicationService {
-    constructor(planRepo, recoveryRepo) {
+    constructor(planRepo, recoveryRepo, exerciseRepo) {
         this.planRepo = planRepo;
         this.recoveryRepo = recoveryRepo;
+        this.exerciseRepo = exerciseRepo;
+    }
+    async catalog() {
+        if (this.exerciseRepo) {
+            try {
+                const all = await this.exerciseRepo.findAll();
+                if (all && all.length > 0)
+                    return all;
+            }
+            catch {
+                // fallback below
+            }
+        }
+        return exercises_1.EXERCISES;
     }
     async generateAndPersist(userId, partialInput, historialManual) {
         const historial = historialManual ??
             (await this.buildHistorialFromRepos(userId));
-        const input = { ...partialInput, historial };
-        const plan = (0, generatePlan_1.generateWorkoutPlan)(input);
-        return this.planRepo.saveNewVersion(userId, plan);
+        const catalog = await this.catalog();
+        const limitaciones = partialInput.limitaciones ?? (0, health_1.construirLimitaciones)([], [], false, catalog);
+        const input = { ...partialInput, limitaciones, historial };
+        const plan = (0, generatePlan_1.generateWorkoutPlan)(input, catalog);
+        return this.planRepo.saveNewVersion(userId, plan, catalog);
     }
     /**
      * Genera y guarda una NUEVA versión de la rutina a partir de los ajustes
@@ -48,7 +64,7 @@ class PlanApplicationService {
                 ejerciciosFavoritosIds: [],
                 solicitaOlympia: false, // Olympia no se pide desde la app: ver levelSelection
             },
-            limitaciones: (0, health_1.construirLimitaciones)(s.lesiones, s.dolorActual, s.condicionMedica),
+            limitaciones: (0, health_1.construirLimitaciones)(s.lesiones, s.dolorActual, s.condicionMedica, await this.catalog()),
         });
     }
     async getActivePlan(userId) {
@@ -77,13 +93,14 @@ class PlanApplicationService {
         if (!ejercicioOriginal) {
             throw new common_1.NotFoundException('Ejercicio no encontrado en el día especificado.');
         }
+        const catalog = await this.catalog();
         // 3. Validar que el nuevo ejercicio existe
-        const nuevoEjercicio = exercises_1.EXERCISES.find((e) => e.id === newExerciseId);
+        const nuevoEjercicio = catalog.find((e) => e.id === newExerciseId);
         if (!nuevoEjercicio) {
             throw new common_1.BadRequestException('El ejercicio de sustitución no existe en el catálogo.');
         }
         // 4. Validar que el nuevo ejercicio es una alternativa válida
-        const ejercicioOriginalCatalogo = exercises_1.EXERCISES.find((e) => e.id === oldExerciseId);
+        const ejercicioOriginalCatalogo = catalog.find((e) => e.id === oldExerciseId);
         const esAlternativaValida = ejercicioOriginalCatalogo?.alternativas.includes(newExerciseId) ??
             false;
         const mismoGrupoPrimario = ejercicioOriginalCatalogo?.grupoPrimario === nuevoEjercicio.grupoPrimario;
@@ -91,7 +108,7 @@ class PlanApplicationService {
             throw new common_1.BadRequestException('El ejercicio seleccionado no es una alternativa válida para este grupo muscular.');
         }
         // 5. Persistir la sustitución
-        return this.planRepo.substituteExercise(userId, workoutDayId, oldExerciseId, newExerciseId, motivo);
+        return this.planRepo.substituteExercise(userId, workoutDayId, oldExerciseId, newExerciseId, motivo, catalog);
     }
     async buildHistorialFromRepos(userId) {
         const recoveryScorePromedio = await this.recoveryRepo.averageRecentRecoveryScore(userId, 7);

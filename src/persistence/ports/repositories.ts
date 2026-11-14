@@ -1,4 +1,4 @@
-import { UserSettings, WorkoutPlanResult } from '../../domain/types';
+import { Exercise, UserSettings, WorkoutPlanResult } from '../../domain/types';
 import { SessionLog } from '../../engine/adaptationEngine';
 
 // ============================================================================
@@ -21,7 +21,7 @@ export interface PlanRepositoryPort {
   /** Devuelve el plan activo actual del usuario, o null si nunca generó uno. */
   findActiveByUser(userId: string): Promise<StoredPlan | null>;
   /** Guarda un nuevo plan como versión siguiente y marca los anteriores como inactivos. */
-  saveNewVersion(userId: string, plan: WorkoutPlanResult): Promise<StoredPlan>;
+  saveNewVersion(userId: string, plan: WorkoutPlanResult, catalog?: Exercise[]): Promise<StoredPlan>;
   /** Historial completo de versiones (para que la IA explique "por qué cambió tu rutina"). */
   findAllVersionsByUser(userId: string): Promise<StoredPlan[]>;
   /**
@@ -34,6 +34,7 @@ export interface PlanRepositoryPort {
     oldExerciseId: string,
     newExerciseId: string,
     motivo: string,
+    catalog?: Exercise[],
   ): Promise<StoredPlan>;
 }
 

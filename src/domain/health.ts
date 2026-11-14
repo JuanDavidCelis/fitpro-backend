@@ -1,5 +1,5 @@
-import { EXERCISES } from '../data/exercises';
-import { AreaCorporal, Limitaciones, PatronMovimiento } from './types';
+import { EXERCISES as DEFAULT_EXERCISES } from '../data/exercises';
+import { AreaCorporal, Exercise, Limitaciones, PatronMovimiento } from './types';
 
 export const AREAS_CORPORALES: readonly AreaCorporal[] = [
   'hombro', 'codo', 'muneca', 'espalda_baja', 'cadera', 'rodilla', 'tobillo',
@@ -29,6 +29,7 @@ export function construirLimitaciones(
   lesiones: readonly AreaCorporal[],
   dolorActual: readonly AreaCorporal[],
   condicionMedica: boolean,
+  catalog: Exercise[] = DEFAULT_EXERCISES,
 ): Limitaciones {
   const areas = new Set<AreaCorporal>([...lesiones, ...dolorActual]);
   const patrones = new Set<PatronMovimiento>();
@@ -37,7 +38,7 @@ export function construirLimitaciones(
   // Muñeca/codo: se omiten el trabajo de antebrazo y los acarreos de agarre.
   const excluidos = new Set<string>();
   if (areas.has('muneca') || areas.has('codo')) {
-    for (const ex of EXERCISES) {
+    for (const ex of catalog) {
       if (ex.etiquetas.includes('antebrazo') || ex.patron === 'carry') excluidos.add(ex.id);
     }
   }

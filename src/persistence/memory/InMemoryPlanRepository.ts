@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { WorkoutPlanResult } from '../../domain/types';
-import { EXERCISES } from '../../data/exercises';
+import { Exercise, WorkoutPlanResult } from '../../domain/types';
+import { EXERCISES as DEFAULT_EXERCISES } from '../../data/exercises';
 import { PlanRepositoryPort, StoredPlan } from '../ports/repositories';
 import { randomUUID } from 'crypto';
 
@@ -18,7 +18,7 @@ export class InMemoryPlanRepository implements PlanRepositoryPort {
     return this.plans.find((p) => p.userId === userId && p.activo) ?? null;
   }
 
-  async saveNewVersion(userId: string, plan: WorkoutPlanResult): Promise<StoredPlan> {
+  async saveNewVersion(userId: string, plan: WorkoutPlanResult, _catalog?: Exercise[]): Promise<StoredPlan> {
     const versionesPrevias = this.plans.filter((p) => p.userId === userId);
     const siguienteVersion = versionesPrevias.length + 1;
 
@@ -63,6 +63,7 @@ export class InMemoryPlanRepository implements PlanRepositoryPort {
     oldExerciseId: string,
     newExerciseId: string,
     motivo: string,
+    catalog?: Exercise[],
   ): Promise<StoredPlan> {
     const planIndex = this.plans.findIndex((p) => p.userId === userId && p.activo);
     if (planIndex === -1) {
@@ -81,7 +82,8 @@ export class InMemoryPlanRepository implements PlanRepositoryPort {
     }
 
     // Validar que el nuevo ejercicio existe en el catálogo
-    const nuevoEjercicio = EXERCISES.find((e) => e.id === newExerciseId);
+    const ejercicios = catalog && catalog.length ? catalog : DEFAULT_EXERCISES;
+    const nuevoEjercicio = ejercicios.find((e) => e.id === newExerciseId);
     if (!nuevoEjercicio) {
       throw new NotFoundException(`Replacement exercise ${newExerciseId} not found in catalog`);
     }

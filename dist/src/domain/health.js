@@ -25,7 +25,7 @@ const EVITAN_ALTO_IMPACTO = ['rodilla', 'cadera', 'tobillo', 'espalda_baja'];
  * Traduce lo que el usuario declara (zonas con lesión/dolor y condición
  * médica) a las restricciones que entiende el motor de reglas.
  */
-function construirLimitaciones(lesiones, dolorActual, condicionMedica) {
+function construirLimitaciones(lesiones, dolorActual, condicionMedica, catalog = exercises_1.EXERCISES) {
     const areas = new Set([...lesiones, ...dolorActual]);
     const patrones = new Set();
     for (const a of areas)
@@ -33,7 +33,7 @@ function construirLimitaciones(lesiones, dolorActual, condicionMedica) {
     // Muñeca/codo: se omiten el trabajo de antebrazo y los acarreos de agarre.
     const excluidos = new Set();
     if (areas.has('muneca') || areas.has('codo')) {
-        for (const ex of exercises_1.EXERCISES) {
+        for (const ex of catalog) {
             if (ex.etiquetas.includes('antebrazo') || ex.patron === 'carry')
                 excluidos.add(ex.id);
         }

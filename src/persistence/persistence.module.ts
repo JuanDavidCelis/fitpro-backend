@@ -6,14 +6,16 @@ import { PrismaRecoveryRepository } from './prisma/PrismaRecoveryRepository';
 import { PrismaUserRepository } from './prisma/PrismaUserRepository';
 import { PrismaProfileRepository } from './prisma/PrismaProfileRepository';
 import { PrismaProgressRepository } from './prisma/PrismaProgressRepository';
+import { PrismaExerciseRepository } from './prisma/PrismaExerciseRepository';
 import { InMemoryPlanRepository } from './memory/InMemoryPlanRepository';
 import { InMemorySessionRepository } from './memory/InMemorySessionRepository';
 import { InMemoryRecoveryRepository } from './memory/InMemoryRecoveryRepository';
 import { InMemoryUserRepository } from './memory/InMemoryUserRepository';
 import { InMemoryProfileRepository } from './memory/InMemoryProfileRepository';
 import { InMemoryProgressRepository } from './memory/InMemoryProgressRepository';
+import { InMemoryExerciseRepository } from './memory/InMemoryExerciseRepository';
 import {
-  PLAN_REPOSITORY, PROFILE_REPOSITORY, PROGRESS_REPOSITORY, RECOVERY_REPOSITORY, SESSION_REPOSITORY, USER_REPOSITORY,
+  EXERCISE_REPOSITORY, PLAN_REPOSITORY, PROFILE_REPOSITORY, PROGRESS_REPOSITORY, RECOVERY_REPOSITORY, SESSION_REPOSITORY, USER_REPOSITORY,
 } from './tokens';
 
 // Controlado por variable de entorno para poder correr el backend en modo
@@ -51,10 +53,14 @@ const useInMemory = process.env.USE_IN_MEMORY_DB === 'true';
       useClass: useInMemory ? InMemoryProgressRepository : PrismaProgressRepository,
     },
     {
+      provide: EXERCISE_REPOSITORY,
+      useClass: useInMemory ? InMemoryExerciseRepository : PrismaExerciseRepository,
+    },
+    {
       provide: USER_REPOSITORY,
       useClass: useInMemory ? InMemoryUserRepository : PrismaUserRepository,
     },
   ],
-  exports: [PLAN_REPOSITORY, SESSION_REPOSITORY, RECOVERY_REPOSITORY, USER_REPOSITORY, PROFILE_REPOSITORY, PROGRESS_REPOSITORY],
+  exports: [PLAN_REPOSITORY, SESSION_REPOSITORY, RECOVERY_REPOSITORY, USER_REPOSITORY, PROFILE_REPOSITORY, PROGRESS_REPOSITORY, EXERCISE_REPOSITORY],
 })
 export class PersistenceModule {}

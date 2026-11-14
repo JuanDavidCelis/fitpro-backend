@@ -15,9 +15,9 @@ export declare function isEligible(exercise: Exercise, equipamientoDisponible: S
  * (sección 21: mantener patrón de movimiento y grupo muscular en lo posible).
  * Devuelve null si ninguna alternativa es viable (se descarta ese slot).
  */
-export declare function resolveExercise(idealExerciseId: string, input: EngineInput, nivelPrograma: NivelPrograma, yaUsados: Set<string>): SelectedExercise | null;
+export declare function resolveExercise(idealExerciseId: string, input: EngineInput, nivelPrograma: NivelPrograma, yaUsados: Set<string>, catalog?: Exercise[]): SelectedExercise | null;
 /**
  * Selecciona todos los ejercicios elegibles para un grupo muscular dado,
  * ordenados sin repetir, respetando equipamiento/nivel/limitaciones.
  */
-export declare function candidatesForGroup(grupo: GrupoMuscular, input: EngineInput, nivelPrograma: NivelPrograma): Exercise[];
+export declare function candidatesForGroup(grupo: GrupoMuscular, input: EngineInput, nivelPrograma: NivelPrograma, catalog?: Exercise[]): Exercise[];

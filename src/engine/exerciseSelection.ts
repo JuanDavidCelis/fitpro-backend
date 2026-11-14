@@ -1,5 +1,5 @@
 import { Exercise, EngineInput, GrupoMuscular, NivelPrograma } from '../domain/types';
-import { EXERCISES, findExercise } from '../data/exercises';
+import { EXERCISES as DEFAULT_EXERCISES } from '../data/exercises';
 
 // Orden de progresión de niveles de programa, usado para comparar "nivel <= nivel usuario".
 const NIVEL_ORDEN: Record<NivelPrograma, number> = {
@@ -46,6 +46,7 @@ export function resolveExercise(
   input: EngineInput,
   nivelPrograma: NivelPrograma,
   yaUsados: Set<string>,
+  catalog: Exercise[] = DEFAULT_EXERCISES,
 ): SelectedExercise | null {
   const equipamientoDisponible = new Set<string>([
     ...input.equipamientoDisponible,
@@ -53,7 +54,8 @@ export function resolveExercise(
   ]);
   const excluidosPreferencia = new Set(input.preferencias.ejerciciosExcluidosIds);
 
-  const ideal = findExercise(idealExerciseId);
+  const byId = new Map(catalog.map((e) => [e.id, e]));
+  const ideal = byId.get(idealExerciseId);
   if (!ideal) return null;
 
   const candidatos = [ideal.id, ...ideal.alternativas];
@@ -62,7 +64,7 @@ export function resolveExercise(
     if (yaUsados.has(candidatoId)) continue;
     if (excluidosPreferencia.has(candidatoId)) continue;
 
-    const candidato = findExercise(candidatoId);
+    const candidato = byId.get(candidatoId);
     if (!candidato) continue;
 
     if (isEligible(candidato, equipamientoDisponible, nivelPrograma, input.limitaciones)) {
@@ -89,6 +91,7 @@ export function candidatesForGroup(
   grupo: GrupoMuscular,
   input: EngineInput,
   nivelPrograma: NivelPrograma,
+  catalog: Exercise[] = DEFAULT_EXERCISES,
 ): Exercise[] {
   const equipamientoDisponible = new Set<string>([
     ...input.equipamientoDisponible,
@@ -96,7 +99,7 @@ export function candidatesForGroup(
   ]);
   const excluidosPreferencia = new Set(input.preferencias.ejerciciosExcluidosIds);
 
-  return EXERCISES.filter(
+  return catalog.filter(
     (ex) =>
       ex.grupoPrimario === grupo &&
       !excluidosPreferencia.has(ex.id) &&

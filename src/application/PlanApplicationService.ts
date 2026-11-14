@@ -1,9 +1,9 @@
-import { EngineInput, UserSettings, WorkoutPlanResult } from '../domain/types';
-import { EXERCISES } from '../data/exercises';
+import { EngineInput, Exercise, UserSettings, WorkoutPlanResult } from '../domain/types';
+import { EXERCISES as DEFAULT_EXERCISES } from '../data/exercises';
 import { construirLimitaciones } from '../domain/health';
 import { generateWorkoutPlan } from '../engine/generatePlan';
 import { PlanRepositoryPort, RecoveryRepositoryPort, StoredPlan } from '../persistence/ports/repositories';
-import { SessionRepositoryPort } from '../persistence/ports/repositories';
+import { ExerciseRepositoryPort } from '../persistence/ports/exerciseRepository';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 /**
@@ -17,7 +17,20 @@ export class PlanApplicationService {
   constructor(
     private readonly planRepo: PlanRepositoryPort,
     private readonly recoveryRepo: RecoveryRepositoryPort,
+    private readonly exerciseRepo?: ExerciseRepositoryPort,
   ) {}
+
+  private async catalog(): Promise<Exercise[]> {
+    if (this.exerciseRepo) {
+      try {
+        const all = await this.exerciseRepo.findAll();
+        if (all && all.length > 0) return all;
+      } catch {
+        // fallback below
+      }
+    }
+    return DEFAULT_EXERCISES;
+  }
 
   async generateAndPersist(
     userId: string,
@@ -28,9 +41,11 @@ export class PlanApplicationService {
       historialManual ??
       (await this.buildHistorialFromRepos(userId));
 
-    const input: EngineInput = { ...partialInput, historial };
-    const plan: WorkoutPlanResult = generateWorkoutPlan(input);
-    return this.planRepo.saveNewVersion(userId, plan);
+    const catalog = await this.catalog();
+    const limitaciones = partialInput.limitaciones ?? construirLimitaciones([], [], false, catalog);
+    const input: EngineInput = { ...partialInput, limitaciones, historial };
+    const plan: WorkoutPlanResult = generateWorkoutPlan(input, catalog);
+    return this.planRepo.saveNewVersion(userId, plan, catalog);
   }
 
   /**
@@ -57,7 +72,7 @@ export class PlanApplicationService {
         ejerciciosFavoritosIds: [],
         solicitaOlympia: false, // Olympia no se pide desde la app: ver levelSelection
       },
-      limitaciones: construirLimitaciones(s.lesiones, s.dolorActual, s.condicionMedica),
+      limitaciones: construirLimitaciones(s.lesiones, s.dolorActual, s.condicionMedica, await this.catalog()),
     });
   }
 
@@ -98,14 +113,15 @@ export class PlanApplicationService {
       throw new NotFoundException('Ejercicio no encontrado en el día especificado.');
     }
 
+    const catalog = await this.catalog();
     // 3. Validar que el nuevo ejercicio existe
-    const nuevoEjercicio = EXERCISES.find((e) => e.id === newExerciseId);
+    const nuevoEjercicio = catalog.find((e) => e.id === newExerciseId);
     if (!nuevoEjercicio) {
       throw new BadRequestException('El ejercicio de sustitución no existe en el catálogo.');
     }
 
     // 4. Validar que el nuevo ejercicio es una alternativa válida
-    const ejercicioOriginalCatalogo = EXERCISES.find((e) => e.id === oldExerciseId);
+    const ejercicioOriginalCatalogo = catalog.find((e) => e.id === oldExerciseId);
     const esAlternativaValida =
       ejercicioOriginalCatalogo?.alternativas.includes(newExerciseId) ??
       false;
@@ -119,7 +135,7 @@ export class PlanApplicationService {
     }
 
     // 5. Persistir la sustitución
-    return this.planRepo.substituteExercise(userId, workoutDayId, oldExerciseId, newExerciseId, motivo);
+    return this.planRepo.substituteExercise(userId, workoutDayId, oldExerciseId, newExerciseId, motivo, catalog);
   }
 
   private async buildHistorialFromRepos(userId: string): Promise<EngineInput['historial']> {

@@ -23,7 +23,7 @@ let InMemoryPlanRepository = class InMemoryPlanRepository {
     async findActiveByUser(userId) {
         return this.plans.find((p) => p.userId === userId && p.activo) ?? null;
     }
-    async saveNewVersion(userId, plan) {
+    async saveNewVersion(userId, plan, _catalog) {
         const versionesPrevias = this.plans.filter((p) => p.userId === userId);
         const siguienteVersion = versionesPrevias.length + 1;
         // Regla de negocio (documento de diseño, sección 5 del modelo de datos):
@@ -57,7 +57,7 @@ let InMemoryPlanRepository = class InMemoryPlanRepository {
             .filter((p) => p.userId === userId)
             .sort((a, b) => a.version - b.version);
     }
-    async substituteExercise(userId, workoutDayId, oldExerciseId, newExerciseId, motivo) {
+    async substituteExercise(userId, workoutDayId, oldExerciseId, newExerciseId, motivo, catalog) {
         const planIndex = this.plans.findIndex((p) => p.userId === userId && p.activo);
         if (planIndex === -1) {
             throw new common_1.NotFoundException('No active plan found for user');
@@ -72,7 +72,8 @@ let InMemoryPlanRepository = class InMemoryPlanRepository {
             throw new common_1.NotFoundException(`Exercise ${oldExerciseId} not found in workout day ${workoutDayId}`);
         }
         // Validar que el nuevo ejercicio existe en el catálogo
-        const nuevoEjercicio = exercises_1.EXERCISES.find((e) => e.id === newExerciseId);
+        const ejercicios = catalog && catalog.length ? catalog : exercises_1.EXERCISES;
+        const nuevoEjercicio = ejercicios.find((e) => e.id === newExerciseId);
         if (!nuevoEjercicio) {
             throw new common_1.NotFoundException(`Replacement exercise ${newExerciseId} not found in catalog`);
         }

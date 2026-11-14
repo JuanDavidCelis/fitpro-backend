@@ -4,6 +4,7 @@ exports.generateWorkoutPlan = generateWorkoutPlan;
 const levelSelection_1 = require("./levelSelection");
 const splitSelection_1 = require("./splitSelection");
 const exerciseSelection_1 = require("./exerciseSelection");
+const exercises_1 = require("../data/exercises");
 const setsRepsParams_1 = require("./setsRepsParams");
 const cardioSelection_1 = require("./cardioSelection");
 const safetyValidation_1 = require("./safetyValidation");
@@ -16,7 +17,7 @@ const safetyValidation_1 = require("./safetyValidation");
  *   4. Parámetros de series/reps/descanso
  *   5. Validación de seguridad
  */
-function generateWorkoutPlan(input) {
+function generateWorkoutPlan(input, catalog = exercises_1.EXERCISES) {
     const trace = [];
     const warnings = [];
     // Paso 1
@@ -48,11 +49,11 @@ function generateWorkoutPlan(input) {
     // días distintos de la semana es normal (y necesaria cuando el catálogo
     // disponible es reducido, p. ej. sin equipamiento); lo que se evita es
     // repetir un ejercicio DENTRO del mismo día.
-    const dias = splitResult.dias.map((template) => buildDay(template, input, nivelPrograma, trace));
+    const dias = splitResult.dias.map((template) => buildDay(template, input, nivelPrograma, trace, catalog));
     // Aplicar músculos prioritarios (sección 8): +1 ejercicio extra si el grupo
     // prioritario aparece en el split. Aquí sí se busca variedad frente a lo ya
     // usado en ESE día concreto.
-    applyPriorityMuscles(dias, input, nivelPrograma, trace);
+    applyPriorityMuscles(dias, input, nivelPrograma, trace, catalog);
     // Paso 5
     const validation = (0, safetyValidation_1.validatePlanSafety)(dias, nivelPrograma);
     trace.push(...validation.trace);
@@ -65,7 +66,7 @@ function generateWorkoutPlan(input) {
         trace,
     };
 }
-function buildDay(template, input, nivelPrograma, trace) {
+function buildDay(template, input, nivelPrograma, trace, catalog) {
     const ejercicios = [];
     const usadosEnDia = new Set();
     const gruposDelDia = template.gruposMusculares.filter((g) => g !== 'cardio');
@@ -74,7 +75,7 @@ function buildDay(template, input, nivelPrograma, trace) {
     // por overlap). Se limita el total según minutos por sesión.
     const maxEjerciciosPorGrupo = gruposDelDia.length <= 2 ? 3 : 2;
     for (const grupo of gruposDelDia) {
-        const candidatos = (0, exerciseSelection_1.candidatesForGroup)(grupo, input, nivelPrograma).filter((c) => !usadosEnDia.has(c.id));
+        const candidatos = (0, exerciseSelection_1.candidatesForGroup)(grupo, input, nivelPrograma, catalog).filter((c) => !usadosEnDia.has(c.id));
         if (candidatos.length === 0) {
             trace.push(`Sin candidatos disponibles para ${grupo} en día "${template.nombre}" (equipamiento/nivel/limitaciones lo impiden).`);
             continue;
@@ -152,13 +153,13 @@ function marcarSupersets(ejercicios, grupos, trace, nombreDia) {
             'como superset agonista-antagonista para optimizar el tiempo (estrategia de programación, sección 5).');
     }
 }
-function applyPriorityMuscles(dias, input, nivelPrograma, trace) {
+function applyPriorityMuscles(dias, input, nivelPrograma, trace, catalog) {
     for (const grupoPrioritario of input.preferencias.musculosPrioritarios.slice(0, 2)) {
         const diaConGrupo = dias.find((d) => d.gruposMusculares.includes(grupoPrioritario));
         if (!diaConGrupo)
             continue;
         const idsYaEnEseDia = new Set(diaConGrupo.ejercicios.map((e) => e.exerciseId));
-        const candidatos = (0, exerciseSelection_1.candidatesForGroup)(grupoPrioritario, input, nivelPrograma).filter((c) => !idsYaEnEseDia.has(c.id));
+        const candidatos = (0, exerciseSelection_1.candidatesForGroup)(grupoPrioritario, input, nivelPrograma, catalog).filter((c) => !idsYaEnEseDia.has(c.id));
         if (candidatos.length === 0)
             continue;
         const extra = candidatos[0];

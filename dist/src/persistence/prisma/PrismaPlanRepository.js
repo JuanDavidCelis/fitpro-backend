@@ -43,7 +43,7 @@ let PrismaPlanRepository = class PrismaPlanRepository {
             return null;
         return this.toStoredPlan(row);
     }
-    async saveNewVersion(userId, plan) {
+    async saveNewVersion(userId, plan, catalog) {
         return this.prisma.$transaction(async (tx) => {
             const versionesPrevias = await tx.workoutPlan.count({ where: { userId } });
             await tx.workoutPlan.updateMany({
@@ -51,28 +51,55 @@ let PrismaPlanRepository = class PrismaPlanRepository {
                 data: { activo: false },
             });
             // Asegura que el catálogo de ejercicios exista (FK de WorkoutExercise).
-            const idsUsados = new Set(plan.dias.flatMap((d) => d.ejercicios.map((e) => e.exerciseId)));
-            for (const id of idsUsados) {
-                const ex = exercises_1.EXERCISES.find((e) => e.id === id);
-                if (!ex)
-                    continue;
-                await tx.exercise.upsert({
-                    where: { id: ex.id },
-                    update: {},
-                    create: {
-                        id: ex.id,
-                        nombre: ex.nombre,
-                        grupoPrimario: ex.grupoPrimario,
-                        gruposSecundarios: ex.gruposSecundarios,
-                        equipamientoRequerido: ex.equipamientoRequerido,
-                        nivelMinimo: ex.nivelMinimo,
-                        patron: ex.patron,
-                        instrucciones: ex.instrucciones,
-                        erroresComunes: ex.erroresComunes,
-                        etiquetas: ex.etiquetas,
-                        alternativas: ex.alternativas,
-                    },
-                });
+            // Usa el catálogo efectivo (incluye ejercicios nuevos de BD) y, si falta
+            // metadata, toma la embebida en el plan generado.
+            const fuente = catalog && catalog.length ? catalog : exercises_1.EXERCISES;
+            const byId = new Map(fuente.map((e) => [e.id, e]));
+            for (const dia of plan.dias) {
+                for (const ej of dia.ejercicios) {
+                    const ex = byId.get(ej.exerciseId) ?? exercises_1.EXERCISES.find((e) => e.id === ej.exerciseId);
+                    const data = ex ?? {
+                        id: ej.exerciseId,
+                        nombre: ej.nombre,
+                        grupoPrimario: ej.grupoPrimario,
+                        gruposSecundarios: [],
+                        equipamientoRequerido: [],
+                        nivelMinimo: plan.nivelPrograma,
+                        patron: 'push',
+                        instrucciones: ej.instrucciones ?? '',
+                        erroresComunes: ej.erroresComunes ?? [],
+                        etiquetas: [],
+                        alternativas: ej.alternativas ?? [],
+                    };
+                    await tx.exercise.upsert({
+                        where: { id: ej.exerciseId },
+                        update: {
+                            nombre: data.nombre,
+                            grupoPrimario: data.grupoPrimario,
+                            gruposSecundarios: data.gruposSecundarios,
+                            equipamientoRequerido: data.equipamientoRequerido,
+                            nivelMinimo: data.nivelMinimo,
+                            patron: data.patron,
+                            instrucciones: data.instrucciones,
+                            erroresComunes: data.erroresComunes,
+                            etiquetas: data.etiquetas,
+                            alternativas: data.alternativas,
+                        },
+                        create: {
+                            id: data.id,
+                            nombre: data.nombre,
+                            grupoPrimario: data.grupoPrimario,
+                            gruposSecundarios: data.gruposSecundarios,
+                            equipamientoRequerido: data.equipamientoRequerido,
+                            nivelMinimo: data.nivelMinimo,
+                            patron: data.patron,
+                            instrucciones: data.instrucciones,
+                            erroresComunes: data.erroresComunes,
+                            etiquetas: data.etiquetas,
+                            alternativas: data.alternativas,
+                        },
+                    });
+                }
             }
             const creado = await tx.workoutPlan.create({
                 data: {
@@ -125,7 +152,7 @@ let PrismaPlanRepository = class PrismaPlanRepository {
         });
         return rows.map((r) => this.toStoredPlan(r));
     }
-    async substituteExercise(userId, workoutDayId, oldExerciseId, newExerciseId, motivo) {
+    async substituteExercise(userId, workoutDayId, oldExerciseId, newExerciseId, motivo, catalog) {
         return this.prisma.$transaction(async (tx) => {
             // 1. Obtener el plan activo con sus días y ejercicios
             const plan = await tx.workoutPlan.findFirst({
@@ -144,10 +171,42 @@ let PrismaPlanRepository = class PrismaPlanRepository {
             if (!ejercicioActual) {
                 throw new common_1.NotFoundException(`Exercise ${oldExerciseId} not found in workout day ${workoutDayId}`);
             }
-            // 3. Obtener el nuevo ejercicio del catálogo (para validar que existe y obtener sus datos)
-            const nuevoEjercicio = await tx.exercise.findUnique({ where: { id: newExerciseId } });
+            // 3. Obtener/asegurar el nuevo ejercicio del catálogo
+            let nuevoEjercicio = await tx.exercise.findUnique({ where: { id: newExerciseId } });
             if (!nuevoEjercicio) {
-                throw new common_1.NotFoundException(`Replacement exercise ${newExerciseId} not found in catalog`);
+                const fuente = catalog && catalog.length ? catalog : exercises_1.EXERCISES;
+                const ex = fuente.find((e) => e.id === newExerciseId);
+                if (!ex) {
+                    throw new common_1.NotFoundException(`Replacement exercise ${newExerciseId} not found in catalog`);
+                }
+                nuevoEjercicio = await tx.exercise.upsert({
+                    where: { id: ex.id },
+                    update: {
+                        nombre: ex.nombre,
+                        grupoPrimario: ex.grupoPrimario,
+                        gruposSecundarios: ex.gruposSecundarios,
+                        equipamientoRequerido: ex.equipamientoRequerido,
+                        nivelMinimo: ex.nivelMinimo,
+                        patron: ex.patron,
+                        instrucciones: ex.instrucciones,
+                        erroresComunes: ex.erroresComunes,
+                        etiquetas: ex.etiquetas,
+                        alternativas: ex.alternativas,
+                    },
+                    create: {
+                        id: ex.id,
+                        nombre: ex.nombre,
+                        grupoPrimario: ex.grupoPrimario,
+                        gruposSecundarios: ex.gruposSecundarios,
+                        equipamientoRequerido: ex.equipamientoRequerido,
+                        nivelMinimo: ex.nivelMinimo,
+                        patron: ex.patron,
+                        instrucciones: ex.instrucciones,
+                        erroresComunes: ex.erroresComunes,
+                        etiquetas: ex.etiquetas,
+                        alternativas: ex.alternativas,
+                    },
+                });
             }
             // 4. Eliminar el ejercicio antiguo y crear el nuevo en su lugar
             await tx.workoutExercise.delete({ where: { id: ejercicioActual.id } });

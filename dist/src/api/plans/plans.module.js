@@ -134,8 +134,8 @@ exports.PlansModule = PlansModule = __decorate([
         providers: [
             {
                 provide: exports.PLAN_APPLICATION_SERVICE,
-                useFactory: (planRepo, recoveryRepo) => new PlanApplicationService_1.PlanApplicationService(planRepo, recoveryRepo),
-                inject: [tokens_1.PLAN_REPOSITORY, tokens_1.RECOVERY_REPOSITORY],
+                useFactory: (planRepo, recoveryRepo, exerciseRepo) => new PlanApplicationService_1.PlanApplicationService(planRepo, recoveryRepo, exerciseRepo),
+                inject: [tokens_1.PLAN_REPOSITORY, tokens_1.RECOVERY_REPOSITORY, tokens_1.EXERCISE_REPOSITORY],
             },
         ],
         exports: [exports.PLAN_APPLICATION_SERVICE],

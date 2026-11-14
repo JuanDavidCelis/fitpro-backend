@@ -1,5 +1,6 @@
 import { EngineInput, UserSettings } from '../domain/types';
 import { PlanRepositoryPort, RecoveryRepositoryPort, StoredPlan } from '../persistence/ports/repositories';
+import { ExerciseRepositoryPort } from '../persistence/ports/exerciseRepository';
 /**
  * Orquesta: construir el historial real desde los repositorios + invocar el
  * motor determinista + persistir la nueva versión. Ninguna decisión de
@@ -10,7 +11,9 @@ import { PlanRepositoryPort, RecoveryRepositoryPort, StoredPlan } from '../persi
 export declare class PlanApplicationService {
     private readonly planRepo;
     private readonly recoveryRepo;
-    constructor(planRepo: PlanRepositoryPort, recoveryRepo: RecoveryRepositoryPort);
+    private readonly exerciseRepo?;
+    constructor(planRepo: PlanRepositoryPort, recoveryRepo: RecoveryRepositoryPort, exerciseRepo?: ExerciseRepositoryPort | undefined);
+    private catalog;
     generateAndPersist(userId: string, partialInput: Omit<EngineInput, 'historial'>, historialManual?: EngineInput['historial']): Promise<StoredPlan>;
     /**
      * Genera y guarda una NUEVA versión de la rutina a partir de los ajustes

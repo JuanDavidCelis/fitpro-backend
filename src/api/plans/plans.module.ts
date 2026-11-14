@@ -1,7 +1,8 @@
 import { BadRequestException, Body, Controller, Get, Inject, Module, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
 import { PersistenceModule } from '../../persistence/persistence.module';
-import { PLAN_REPOSITORY, RECOVERY_REPOSITORY } from '../../persistence/tokens';
+import { EXERCISE_REPOSITORY, PLAN_REPOSITORY, RECOVERY_REPOSITORY } from '../../persistence/tokens';
 import { PlanRepositoryPort, RecoveryRepositoryPort } from '../../persistence/ports/repositories';
+import { ExerciseRepositoryPort } from '../../persistence/ports/exerciseRepository';
 import { PlanApplicationService } from '../../application/PlanApplicationService';
 import { GeneratePlanDto, validateGeneratePlanDto } from '../dto/generate-plan.dto';
 import { SubstituteExerciseDto, validateSubstituteExerciseDto } from '../dto/substitute-exercise.dto';
@@ -102,9 +103,9 @@ class PlansController {
   providers: [
     {
       provide: PLAN_APPLICATION_SERVICE,
-      useFactory: (planRepo: PlanRepositoryPort, recoveryRepo: RecoveryRepositoryPort) =>
-        new PlanApplicationService(planRepo, recoveryRepo),
-      inject: [PLAN_REPOSITORY, RECOVERY_REPOSITORY],
+      useFactory: (planRepo: PlanRepositoryPort, recoveryRepo: RecoveryRepositoryPort, exerciseRepo: ExerciseRepositoryPort) =>
+        new PlanApplicationService(planRepo, recoveryRepo, exerciseRepo),
+      inject: [PLAN_REPOSITORY, RECOVERY_REPOSITORY, EXERCISE_REPOSITORY],
     },
   ],
   exports: [PLAN_APPLICATION_SERVICE],

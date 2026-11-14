@@ -1,4 +1,4 @@
-import { WorkoutPlanResult } from '../../domain/types';
+import { Exercise, WorkoutPlanResult } from '../../domain/types';
 import { PlanRepositoryPort, StoredPlan } from '../ports/repositories';
 import { PrismaService } from './PrismaService';
 /**
@@ -12,8 +12,8 @@ export declare class PrismaPlanRepository implements PlanRepositoryPort {
     private readonly prisma;
     constructor(prisma: PrismaService);
     findActiveByUser(userId: string): Promise<StoredPlan | null>;
-    saveNewVersion(userId: string, plan: WorkoutPlanResult): Promise<StoredPlan>;
+    saveNewVersion(userId: string, plan: WorkoutPlanResult, catalog?: Exercise[]): Promise<StoredPlan>;
     findAllVersionsByUser(userId: string): Promise<StoredPlan[]>;
-    substituteExercise(userId: string, workoutDayId: string, oldExerciseId: string, newExerciseId: string, motivo: string): Promise<StoredPlan>;
+    substituteExercise(userId: string, workoutDayId: string, oldExerciseId: string, newExerciseId: string, motivo: string, catalog?: Exercise[]): Promise<StoredPlan>;
     private toStoredPlan;
 }
