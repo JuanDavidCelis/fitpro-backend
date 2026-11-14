@@ -74,6 +74,56 @@ export const EXERCISE_MEDIA: Record<string, ExerciseMedia> = {
   ex_eliptica: { datasetId: '2141', image: 'images/2141-rjtuP6X.jpg', gif: 'videos/2141-rjtuP6X.gif' }, // walk elliptical cross trainer
   ex_carrera: { datasetId: '0685', image: 'images/0685-oLrKqDH.jpg', gif: 'videos/0685-oLrKqDH.gif' }, // run
   ex_intervalos: { datasetId: '1160', image: 'images/1160-dK9394r.jpg', gif: 'videos/1160-dK9394r.gif' }, // burpee
+  ex_sentadilla_hack: { datasetId: '0743', image: 'images/0743-Qa55kX1.jpg', gif: 'videos/0743-Qa55kX1.gif' }, // Sentadilla hack en máquina -> sled hack squat
+  ex_extension_cuadriceps: { datasetId: '0585', image: 'images/0585-my33uHU.jpg', gif: 'videos/0585-my33uHU.gif' }, // Extensión de cuádriceps en máquina -> lever leg extension
+  ex_step_up_mancuernas: { datasetId: '0431', image: 'images/0431-aXtJhlg.jpg', gif: 'videos/0431-aXtJhlg.gif' }, // Step-up con mancuernas -> dumbbell step-up
+  ex_sentadilla_frontal: { datasetId: '0042', image: 'images/0042-zG0zs85.jpg', gif: 'videos/0042-zG0zs85.gif' }, // Sentadilla frontal con barra -> barbell front squat
+  ex_zancada_inversa: { datasetId: '0381', image: 'images/0381-SSsBDwB.jpg', gif: 'videos/0381-SSsBDwB.gif' }, // Zancada inversa con mancuernas -> dumbbell rear lunge
+  ex_prensa_unilateral: { datasetId: '1425', image: 'images/1425-WWD6FzI.jpg', gif: 'videos/1425-WWD6FzI.gif' }, // Prensa de piernas unilateral -> sled 45 degrees one leg press
+  ex_pajaros_mancuernas: { datasetId: '0383', image: 'images/0383-EAs3xL9.jpg', gif: 'videos/0383-EAs3xL9.gif' }, // Pájaros con mancuernas -> dumbbell reverse fly
+  ex_reverse_pec_deck: { datasetId: '0602', image: 'images/0602-myfUsKf.jpg', gif: 'videos/0602-myfUsKf.gif' }, // Aperturas inversas en máquina -> lever seated reverse fly
+  ex_jalon_neutro: { datasetId: '0818', image: 'images/0818-rkg41Fb.jpg', gif: 'videos/0818-rkg41Fb.gif' }, // Jalón al pecho con agarre neutro -> twin handle parallel grip lat pulldown
+  ex_remo_polea_sentado: { datasetId: '0861', image: 'images/0861-fUBheHs.jpg', gif: 'videos/0861-fUBheHs.gif' }, // Remo sentado en polea -> cable seated row
+  ex_remo_t_barra: { datasetId: '0606', image: 'images/0606-aaXr7ld.jpg', gif: 'videos/0606-aaXr7ld.gif' }, // Remo T con barra -> lever t bar row
+  ex_jalon_brazos_rectos: { datasetId: '0238', image: 'images/0238-x69MAlq.jpg', gif: 'videos/0238-x69MAlq.gif' }, // Jalón de brazos rectos en polea -> cable straight arm pulldown
+  ex_dominada_asistida: { datasetId: '0017', image: 'images/0017-kiJ4Z2K.jpg', gif: 'videos/0017-kiJ4Z2K.gif' }, // Dominadas asistidas -> assisted pull-up
+  ex_dominada_supina: { datasetId: '1326', image: 'images/1326-T2mxWqc.jpg', gif: 'videos/1326-T2mxWqc.gif' }, // Dominadas supinas -> chin-up
+  ex_remo_unilateral_polea: { datasetId: '0214', image: 'images/0214-vpp9Ku2.jpg', gif: 'videos/0214-vpp9Ku2.gif' }, // Remo unilateral en polea -> cable seated one arm alternate row
+  ex_extension_triceps_overhead_polea: { datasetId: '0194', image: 'images/0194-2IxROQ1.jpg', gif: 'videos/0194-2IxROQ1.gif' }, // Extensión de tríceps por encima de la cabeza en polea -> cable overhead triceps extension (rope attachment)
+  ex_extension_triceps_unilateral: { datasetId: '0231', image: 'images/0231-sYCcnon.jpg', gif: 'videos/0231-sYCcnon.gif' }, // Extensión unilateral de tríceps en polea -> cable standing one arm triceps extension
+  ex_extension_triceps_mancuerna_overhead: { datasetId: '0430', image: 'images/0430-PdmaD0N.jpg', gif: 'videos/0430-PdmaD0N.gif' }, // Extensión de tríceps sobre la cabeza con mancuerna -> dumbbell standing triceps extension
+  ex_patada_triceps_mancuerna: { datasetId: '1740', image: 'images/1740-CJwa0vD.jpg', gif: 'videos/1740-CJwa0vD.gif' }, // Patada de tríceps con mancuerna -> dumbbell standing bent over one arm triceps extension
+  ex_extension_triceps_barra_v: { datasetId: '0241', image: 'images/0241-gAwDzB3.jpg', gif: 'videos/0241-gAwDzB3.gif' }, // Extensión de tríceps en polea con barra V -> cable triceps pushdown (v-bar)
+  ex_curl_femoral_sentado: { datasetId: '0599', image: 'images/0599-Zg3XY7P.jpg', gif: 'videos/0599-Zg3XY7P.gif' }, // Curl femoral sentado en máquina -> lever seated leg curl
+  ex_curl_femoral_acostado: { datasetId: '0586', image: 'images/0586-17lJ1kr.jpg', gif: 'videos/0586-17lJ1kr.gif' }, // Curl femoral acostado en máquina -> lever lying leg curl
+  ex_pull_through_polea: { datasetId: '0196', image: 'images/0196-OM46QHm.jpg', gif: 'videos/0196-OM46QHm.gif' }, // Pull through en polea -> cable pull through (with rope)
+  ex_buenos_dias_barra: { datasetId: '0044', image: 'images/0044-XlZ4lAC.jpg', gif: 'videos/0044-XlZ4lAC.gif' }, // Buenos días con barra -> barbell good morning
+  ex_extension_cadera_maquina: { datasetId: '2286', image: 'images/2286-OPqShYN.jpg', gif: 'videos/2286-OPqShYN.gif' }, // Extensión de cadera en máquina -> lever hip extension v. 2
+  ex_abduccion_cadera_maquina: { datasetId: '0597', image: 'images/0597-CHpahtl.jpg', gif: 'videos/0597-CHpahtl.gif' }, // Abducción de cadera en máquina -> lever seated hip abduction
+  ex_patada_gluteo_polea: { datasetId: '0860', image: 'images/0860-HEJ6DIX.jpg', gif: 'videos/0860-HEJ6DIX.gif' }, // Patada de glúteo en polea -> cable kickback
+  ex_adduccion_cadera_maquina: { datasetId: '0598', image: 'images/0598-oHsrypV.jpg', gif: 'videos/0598-oHsrypV.gif' }, // Aducción de cadera en máquina -> lever seated hip adduction
+  ex_crunch_inverso: { datasetId: '0872', image: 'images/0872-nCU1Ekp.jpg', gif: 'videos/0872-nCU1Ekp.gif' }, // Crunch inverso -> reverse crunch
+  ex_ab_wheel: { datasetId: '0857', image: 'images/0857-NAgVB3t.jpg', gif: 'videos/0857-NAgVB3t.gif' }, // Ab wheel rollout -> wheel rollerout
+  ex_dead_bug: { datasetId: '0276', image: 'images/0276-iny3m5y.jpg', gif: 'videos/0276-iny3m5y.gif' }, // Dead bug -> dead bug
+  ex_elevacion_talones_sentado: { datasetId: '0594', image: 'images/0594-bOOdeyc.jpg', gif: 'videos/0594-bOOdeyc.gif' }, // Elevación de talones sentado -> lever seated calf raise
+  ex_elevacion_talones_prensa: { datasetId: '1391', image: 'images/1391-ykHcWme.jpg', gif: 'videos/1391-ykHcWme.gif' }, // Elevación de talones en prensa -> sled calf press on leg press
+  ex_press_declinado_mancuernas: { datasetId: '0301', image: 'images/0301-DwhEmmE.jpg', gif: 'videos/0301-DwhEmmE.gif' }, // Press declinado con mancuernas -> dumbbell decline bench press
+  ex_press_inclinado_barra: { datasetId: '0047', image: 'images/0047-3TZduzM.jpg', gif: 'videos/0047-3TZduzM.gif' }, // Press inclinado con barra -> barbell incline bench press
+  ex_flexiones_inclinadas: { datasetId: '0493', image: 'images/0493-B1EVP9F.jpg', gif: 'videos/0493-B1EVP9F.gif' }, // Flexiones inclinadas -> incline push-up
+  ex_curl_predicador: { datasetId: '1627', image: 'images/1627-hacCyUv.jpg', gif: 'videos/1627-hacCyUv.gif' }, // Curl predicador con barra EZ -> ez barbell close grip preacher curl
+  ex_curl_inclinado_mancuernas: { datasetId: '0318', image: 'images/0318-ae9UoXQ.jpg', gif: 'videos/0318-ae9UoXQ.gif' }, // Curl inclinado con mancuernas -> dumbbell incline curl
+  ex_curl_concentrado: { datasetId: '0297', image: 'images/0297-gvsWLQw.jpg', gif: 'videos/0297-gvsWLQw.gif' }, // Curl concentrado con mancuerna -> dumbbell concentration curl
+  ex_curl_barra_ez: { datasetId: '0447', image: 'images/0447-6TG6x2w.jpg', gif: 'videos/0447-6TG6x2w.gif' }, // Curl de bíceps con barra EZ -> ez barbell curl
+  ex_elevacion_lateral_unilateral_polea: { datasetId: '0192', image: 'images/0192-wEulIzp.jpg', gif: 'videos/0192-wEulIzp.gif' }, // Elevación lateral unilateral en polea -> cable one arm lateral raise
+  ex_encogimientos_mancuernas: { datasetId: '0406', image: 'images/0406-NJzBsGJ.jpg', gif: 'videos/0406-NJzBsGJ.gif' }, // Encogimientos de hombros con mancuernas -> dumbbell shrug
+  ex_encogimientos_barra: { datasetId: '0095', image: 'images/0095-dG7tG5y.jpg', gif: 'videos/0095-dG7tG5y.gif' }, // Encogimientos de hombros con barra -> barbell shrug
+  ex_rotacion_externa_polea: { datasetId: '0235', image: 'images/0235-FWdVhcW.jpg', gif: 'videos/0235-FWdVhcW.gif' }, // Rotación externa de hombro en polea -> cable standing shoulder external rotation
+  ex_extension_lumbar_banco: { datasetId: '0488', image: 'images/0488-zkgRrbK.jpg', gif: 'videos/0488-zkgRrbK.gif' }, // Extensión lumbar en banco -> hyperextension (on bench)
+  ex_swing_kettlebell: { datasetId: '0549', image: 'images/0549-UHJlbu3.jpg', gif: 'videos/0549-UHJlbu3.gif' }, // Swing con kettlebell -> kettlebell swing
+  ex_sentadilla_kettlebell: { datasetId: '0534', image: 'images/0534-ZA8b5hc.jpg', gif: 'videos/0534-ZA8b5hc.gif' }, // Sentadilla goblet con kettlebell -> kettlebell goblet squat
+  ex_burpee: { datasetId: '1160', image: 'images/1160-dK9394r.jpg', gif: 'videos/1160-dK9394r.gif' }, // Burpee -> burpee
+  ex_cuerda_saltar: { datasetId: '2612', image: 'images/2612-e1e76I2.jpg', gif: 'videos/2612-e1e76I2.gif' }, // Saltar la cuerda -> jump rope
+  ex_escaladora: { datasetId: '2311', image: 'images/2311-j9Q5crt.jpg', gif: 'videos/2311-j9Q5crt.gif' }, // Escaladora / stair climber -> walking on stepmill
 };
 
 const DEFAULT_BASE = 'https://cdn.jsdelivr.net/gh/Nielide/exercises-dataset@main/';
